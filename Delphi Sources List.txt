@@ -1,0 +1,258 @@
+Source files copied to: C:\Temp\
+    Date/Time: 10/20/2023 10:25:16 AM
+
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\About.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\About.dfm
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\AdjustDateTime.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\AdjustDateTime.dfm
+Copied:           F:\NDAS-I\d7\Imports\ADOX_TLB.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\FastCode\AnsiStringReplaceJOHIA32Unit12.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\FastCode\AnsiStringReplaceJOHPASUnit12.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\BoundariesBrowser.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\BoundariesBrowser.dfm
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\BrowseFuncKey.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\BrowseFuncKey.dfm
+Copied:           F:\NDAS-I\d7\Projects\MyUtils\BrowserUnit.pas
+Copied:           F:\NDAS-I\d7\Projects\MyUtils\BrowserUnit.dfm
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\BrowseScenes.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\BrowseScenes.dfm
+Copied:           F:\ndas-i\D7\Projects\MyUtils\ColumnSelector.pas
+Copied:           F:\ndas-i\D7\Projects\MyUtils\ColumnSelector.dfm
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\ConfirmEachPhoto.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\ConfirmEachPhoto.dfm
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\CopySelectedRecords.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\CopySelectedRecords.dfm
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\DateTimeDiff.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\DateTimeDiff.dfm
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\DeleteOptions.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\DeleteOptions.dfm
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\DeletionConfirmation.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\DeletionConfirmation.dfm
+Copied:           F:\NDAS-I\d7\Projects\dExif2\dexif-master\dEXIF.pas
+Copied:           F:\NDAS-I\d7\Projects\dExif2\dexif-master\dExifWrite.pas
+Copied:           F:\NDAS-I\d7\Projects\dExif2\dexif-master\dGlobal.pas
+Copied:           F:\NDAS-I\d7\Projects\dExif2\dexif-master\dIPTC.pas
+Copied:           F:\NDAS-I\d7\Projects\dExif2\dexif-master\dIptcWrite.pas
+Copied:           F:\NDAS-I\d7\Projects\dExif2\dexif-master\dMetadata.pas
+Copied:           F:\Ndas-i\d7\Projects\DragDrop\Source\DragDrop.pas
+Copied:           F:\NDAS-I\d7\Projects\DragDrop\Source\DragDropFile.pas
+Copied:           F:\Ndas-i\d7\Projects\DragDrop\Source\DragDropFormats.pas
+Copied:           F:\Ndas-i\d7\Projects\DragDrop\Source\DragDropPIDL.pas
+Copied:           F:\Ndas-i\d7\Projects\DragDrop\Source\DragDropText.pas
+Copied:           F:\NDAS-I\d7\Projects\DragDrop\Source\DropSource.pas
+Copied:           F:\Ndas-i\d7\Projects\DragDrop\Source\DropTarget.pas
+Copied:           F:\NDAS-I\d7\Projects\dExif2\dexif-master\dTags.pas
+Copied:           F:\NDAS-I\d7\Projects\dExif2\dexif-master\dUtils.pas
+Copied:           F:\ndas-i\D7\Projects\SMEExport\Sources\ExCnst.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\EXIFInfo.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\EXIFInfo.dfm
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\Export.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\Export.dfm
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\Export2.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\Export2.dfm
+Copied:           F:\NDAS-I\d7\Projects\SMEExport\Sources\ExportDS.pas
+Copied:           F:\NDAS-I\d7\Projects\SMEExport\Sources\ExportDS.dfm
+Copied:           F:\NDAS-I\d7\Projects\MyUtils\Expression.pas
+Copied:           F:\NDAS-I\d7\Projects\MyUtils\Expression.dfm
+Copied:           F:\NDAS-I\d7\Projects\MyUtils\ExtractImage2.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\FastCode\Fastcode.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\FastCode\FastcodeAnsiStringReplaceUnit.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\FastCode\FastcodeCompareMemUnit.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\FastCode\FastcodeCompareStrUnit.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\FastCode\FastcodeCompareTextUnit.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\FastCode\FastcodeCPUID.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\FastCode\FastcodeFillCharUnit.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\FastCode\FastcodeLowerCaseUnit.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\FastCode\FastcodePatch.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\FastCode\FastcodePosExUnit.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\FastCode\FastcodePosUnit.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\FastCode\FastcodeStrCompUnit.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\FastCode\FastcodeStrCopyUnit.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\FastCode\FastcodeStrICompUnit.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\FastCode\FastcodeStrLenUnit.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\FastCode\FastcodeStrToInt32Unit.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\FastCode\FastcodeUpperCaseUnit.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\FastMM\FastMM4.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\FastMM\FastMM4Messages.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\FileMover.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\FileMover.dfm
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\FillLocationInfo.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\FillLocationInfo.dfm
+Copied:           F:\NDAS-I\d7\Projects\MyUtils\FilterLocations.pas
+Copied:           F:\NDAS-I\d7\Projects\MyUtils\FilterLocations.dfm
+Copied:           F:\NDAS-I\d7\Projects\MyUtils\FilterOptions.pas
+Copied:           F:\NDAS-I\d7\Projects\MyUtils\FilterOptions.dfm
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\FilterSettingsUnit.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\FullSize.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\FullSize.dfm
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\GenerateHTML2.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\GenerateHTML2.dfm
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\gnugettext.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\GPS.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\GPSTrackingInfoUnit.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\GPX.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\GPX_Style.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\GPXFile.pas
+Copied:           F:\NDAS-I\d7\Projects\Hiking Manager\Src\Hiking_Decl.pas
+Copied:           F:\NDAS-I\d7\Projects\Hiking Manager\Src\HikingSettingsUnit.pas
+Copied:           F:\NDAS-I\d7\Projects\Hiking Manager\Src\HikingTables.pas
+Copied:           F:\ndas-i\d7\Projects\TP\InternetPro\source\IpConst.pas
+Copied:           F:\ndas-i\d7\Projects\TP\InternetPro\source\IpFtp.pas
+Copied:           F:\ndas-i\d7\Projects\TP\InternetPro\source\IpSock.pas
+Copied:           F:\ndas-i\d7\Projects\TP\InternetPro\source\IpTerm.pas
+Copied:           F:\ndas-i\d7\Projects\TP\InternetPro\source\IpUtils.pas
+Copied:           F:\NDAS-I\d7\Projects\MakeHTML\JpegConv.pas
+Copied:           F:\NDAS-I\d7\Projects\MyUtils\KillIt.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\LocationsBrowser.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\LocationsBrowser.dfm
+Copied:           F:\NDAS-I\d7\Projects\MyUtils\LocationUtils.pas
+Copied:           F:\NDAS-I\d7\Projects\MyUtils\LookupBrowser.pas
+Copied:           F:\NDAS-I\d7\Projects\MyUtils\LookupBrowser.dfm
+Copied:           F:\NDAS-I\d7\Projects\MyUtils\LookupsTableUnit.pas
+Copied:           F:\NDAS-I\d7\Projects\MyUtils\MediaInfoDll.pas
+Copied:           F:\ndas-i\D7\Projects\MyUtils\MetricConversions.pas
+Copied:           F:\NDAS-I\d7\Projects\dExif2\dexif-master\msData.pas
+Copied:           F:\ndas-i\D7\Projects\MyUtils\MyAscii.pas
+Copied:           F:\NDAS-I\d7\Projects\MyUtils\MyDelimitedParser.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\MyReplaceDialog.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\MyReplaceDialog.dfm
+Copied:           F:\NDAS-I\d7\Projects\MyUtils\MyTables.pas
+Copied:           F:\ndas-i\D7\Projects\MyUtils\MyTables_Decl.pas
+Copied:           F:\NDAS-I\d7\Projects\MyUtils\MyUtils.pas
+Copied:           F:\ndas-i\D7\Projects\MyUtils\MyUtils2.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\O32SR.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\ovcbase.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\OvcBCalc.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\OvcBordr.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\OvcCal.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\ovcCalc.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\OvcCaret.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\OvcCmd.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\OvcColor.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\OvcConst.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\OvcData.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\OvcDate.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\ovcdbnf.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\OvcEdCal.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\OvcEdClc.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\OvcEditF.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\OvcEdPop.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\OvcEdTim.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\ovcef.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\OvcExcpt.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\ovcfsc.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\OvcIntl.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\OvcMisc.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\ovcnf.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\ovcpb.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\ovcpf.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\ovcsc.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\ovcsf.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\OvcStr.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\OvcTimer.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\OvcUser.pas
+Copied:           F:\NDAS-I\d7\Projects\TP\Orpheus\source\OvcVer.pas
+Copied:           F:\ndas-i\D7\Projects\MyUtils\OverWrite_Decl.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\OverwriteOrAppend.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\OverwriteOrAppend.dfm
+Copied:           F:\NDAS-I\d7\Projects\MyUtils\ParseExpr.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\PathBrowser.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\PathBrowser.dfm
+Copied:           F:\NDAS-I\d7\Projects\MyUtils\PathConversions.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\PDB_Decl.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\PDBMisc.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\PDBTables.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\PDBUtils.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\PhotoDB.dpr
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\PhotoDBCommonSettings.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\PhotoTableBrowser.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\PhotoTableBrowser.dfm
+Copied:           F:\NDAS-I\d7\Projects\MyUtils\PhotoUtils.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\RecordAudio.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\RecordAudio.dfm
+Copied:           F:\NDAS-I\d7\Projects\NFIMR\Src\ReplaceFieldsInSelectedRecords.pas
+Copied:           F:\NDAS-I\d7\Projects\NFIMR\Src\ReplaceFieldsInSelectedRecords.dfm
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\ReportOptions.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\ReportOptions.dfm
+Copied:           F:\NDAS-I\d7\Projects\RotateImages\Src\RotImg.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\ScanForDocuments.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\ScanForDocuments.dfm
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\ScanForDuplicatesOptions.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\ScanForDuplicatesOptions.dfm
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\ScanningOptions.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\ScanningOptions.dfm
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Scan\ScanPDSMain.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Scan\ScanPDSMain.dfm
+Copied:           F:\NDAS-I\d7\Projects\MyUtils\SettingsFiles.pas
+Copied:           F:\ndas-i\D7\Projects\MyUtils\ShlObj2.pas
+Copied:           F:\ndas-i\D7\Projects\SMEExport\Sources\SME2ADO.pas
+Copied:           F:\ndas-i\D7\Projects\SMEExport\Sources\SME2BDE.pas
+Copied:           F:\ndas-i\D7\Projects\SMEExport\Sources\SME2Cell.pas
+Copied:           F:\ndas-i\D7\Projects\SMEExport\Sources\SME2CLP.pas
+Copied:           F:\ndas-i\D7\Projects\SMEExport\Sources\SME2DBF.pas
+Copied:           F:\ndas-i\D7\Projects\SMEExport\Sources\SME2DIF.pas
+Copied:           F:\ndas-i\D7\Projects\SMEExport\Sources\SME2HTML.pas
+Copied:           F:\ndas-i\D7\Projects\SMEExport\Sources\SME2LDIF.pas
+Copied:           F:\ndas-i\D7\Projects\SMEExport\Sources\SME2OLE.pas
+Copied:           F:\ndas-i\D7\Projects\SMEExport\Sources\SME2PDF.pas
+Copied:           F:\ndas-i\D7\Projects\SMEExport\Sources\SME2RTF.pas
+Copied:           F:\ndas-i\D7\Projects\SMEExport\Sources\SME2SPSS.pas
+Copied:           F:\ndas-i\D7\Projects\SMEExport\Sources\SME2SQL.pas
+Copied:           F:\ndas-i\D7\Projects\SMEExport\Sources\SME2SYLK.pas
+Copied:           F:\ndas-i\D7\Projects\SMEExport\Sources\SME2TXT.pas
+Copied:           F:\ndas-i\D7\Projects\SMEExport\Sources\SME2WKS.pas
+Copied:           F:\ndas-i\D7\Projects\SMEExport\Sources\SME2WQ.pas
+Copied:           F:\ndas-i\D7\Projects\SMEExport\Sources\SME2XLS.pas
+Copied:           F:\ndas-i\D7\Projects\SMEExport\Sources\SME2XML.pas
+Copied:           F:\ndas-i\D7\Projects\SMEExport\Sources\SMEEngDB.pas
+Copied:           F:\ndas-i\D7\Projects\SMEExport\Sources\SMEEngine.pas
+Copied:           F:\ndas-i\D7\Projects\SMEExport\Sources\SMEEngWW.pas
+Copied:           F:\ndas-i\D7\Projects\SMEExport\Sources\SMEMIME.pas
+Copied:           F:\ndas-i\D7\Projects\SMEExport\Sources\SMEMonitor.pas
+Copied:           F:\ndas-i\D7\Projects\SMEExport\Sources\SMEMonitor.dfm
+Copied:           F:\ndas-i\D7\Projects\SMEExport\Sources\SMESave.pas
+Copied:           F:\ndas-i\D7\Projects\SMEExport\Sources\SMESave.dfm
+Copied:           F:\ndas-i\D7\Projects\SMEExport\Sources\SMEStat.pas
+Copied:           F:\ndas-i\D7\Projects\SMEExport\Sources\SMEStat.dfm
+Copied:           F:\ndas-i\D7\Projects\SMEExport\Sources\SMEUtils.pas
+Copied:           F:\ndas-i\D7\Projects\MyUtils\StateNamesX.pas
+Copied:           F:\ndas-i\d7\Projects\TP\SysTools\source\StBase.pas
+Copied:           F:\ndas-i\d7\Projects\TP\SysTools\source\StConst.pas
+Copied:           F:\NDAS-I\d7\Projects\MyUtils\StrCompareX.pas
+Copied:           F:\ndas-i\d7\Projects\TP\SysTools\source\StStrL.pas
+Copied:           F:\ndas-i\d7\Projects\TP\SysTools\source\StStrZ.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\Synonyms.pas
+Copied:           F:\NDAS-I\d7\Projects\MyUtils\TableCreation.pas
+Copied:           F:\NDAS-I\d7\Projects\MyUtils\ThumbNailUnit.pas
+Copied:           F:\ndas-i\D7\Projects\MyUtils\TrackFilterDialog.pas
+Copied:           F:\ndas-i\D7\Projects\MyUtils\TrackFilterDialog.dfm
+Copied:           F:\NDAS-I\d7\Projects\Hiking Manager\Src\TracksBrowser.pas
+Copied:           F:\NDAS-I\d7\Projects\Hiking Manager\Src\TracksBrowser.dfm
+Copied:           F:\NDAS-I\d7\Projects\MyUtils\uBrowseMemo.pas
+Copied:           F:\NDAS-I\d7\Projects\MyUtils\uBrowseMemo.dfm
+Copied:           F:\NDAS-I\d7\Projects\ThumbNails\uExtractImg.pas
+Copied:           F:\NDAS-I\d7\Projects\MyUtils\uGetString.pas
+Copied:           F:\NDAS-I\d7\Projects\MyUtils\uGetString.dfm
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\uHandleMissingFile.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\uHandleMissingFile.dfm
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\UpdateLocationInfoFromGPX.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\UpdateLocationInfoFromGPX.dfm
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\uPhotoDB.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\uPhotoDB.dfm
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\uPhotoDBOptions.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\uPhotoDBOptions.dfm
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\UploadFiles.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\UploadFiles.dfm
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\UploadFiles_Decl.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\VideoStuff2.pas
+Copied:           F:\NDAS-I\d7\Projects\Photo DB\Src\VideoStuff2.dfm
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\xmlpartner\XpBase.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\xmlpartner\XpChrFlt.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\xmlpartner\XpDOM.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\xmlpartner\XpExcept.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\xmlpartner\XpFtpSh.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\xmlpartner\XpHash.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\xmlpartner\XpInet.pas
+Copied:           F:\ndas-i\D7\Projects\GPX Editor\GPX_Editor 1-6-16\lib\xmlpartner\XpParser.pas
+Copied:           F:\NDAS-I\d7\Projects\MyUtils\YesNoDontAskAgain.pas
+Copied:           F:\NDAS-I\d7\Projects\MyUtils\YesNoDontAskAgain.dfm
