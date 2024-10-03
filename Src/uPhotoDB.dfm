@@ -108,7 +108,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
     Top = 1
     Width = 1289
     Height = 580
-    ActivePage = tabBrowse
+    ActivePage = tabPhoto
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 0
     OnChange = PageControl1Change
@@ -2287,9 +2287,9 @@ object frmPhotoDataBase: TfrmPhotoDataBase
         end
         object FillYearMonthDay1: TMenuItem
           Caption = 'Fill Year Month, Day'
-          object FillYearMonthDayfromPhotoDate1: TMenuItem
+          object FromPhotoDate1: TMenuItem
             Caption = 'from PhotoDate'
-            OnClick = FillYearMonthDayfromPhotoDate1Click
+            OnClick = FromPhotoDate1Click
           end
           object FromPhotoDateTime1: TMenuItem
             Caption = 'From PhotoDateTime'
@@ -2592,21 +2592,21 @@ object frmPhotoDataBase: TfrmPhotoDataBase
       ShortCut = 16453
       OnClick = PhotoEditor2Click
     end
-    object AlternatePhotoEditor1: TMenuItem
-      Caption = 'Alternate Photo Editor...'
-      OnClick = AlternatePhotoEditor1Click
+    object CreateThumbnail1: TMenuItem
+      Caption = 'Create Thumbnail'
+      OnClick = CreateThumbnail1Click
     end
     object EditThumbnail1: TMenuItem
       Caption = 'Edit Thumbnail'
       OnClick = EditThumbnail1Click
     end
+    object AlternatePhotoEditor1: TMenuItem
+      Caption = 'Alternate Photo Editor...'
+      OnClick = AlternatePhotoEditor1Click
+    end
     object PlayAudio1: TMenuItem
       Caption = 'Play Audio'
       OnClick = PlayAudio1Click
-    end
-    object CreateThumbnail1: TMenuItem
-      Caption = 'Create Thumbnail'
-      OnClick = CreateThumbnail1Click
     end
     object Ratethisphoto2: TMenuItem
       Caption = 'Rate this photo, Next'

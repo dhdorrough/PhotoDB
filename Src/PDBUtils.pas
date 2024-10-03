@@ -57,7 +57,8 @@ function  MyCreateThumbNail( const FileName: string;
                             var   ErrorMsg: string;
                             Width: integer = THUMBNAILWIDTH;
                             Height: integer = THUMBNAILHEIGHT;
-                            OverWrite: boolean = false): TThumbnailProcessingStatus; overload;
+                            OverWrite: boolean = false;
+                            RotateBy: integer = 0): TThumbnailProcessingStatus; overload;
 function  MyCreateThumbNail( const FileName: string;
                             var   ErrorMsg: string;
                             Width: integer = THUMBNAILWIDTH;
@@ -82,7 +83,7 @@ implementation
 uses
   SysUtils, StStrL, Dialogs, Controls, uGetString, ShellAPI,
   Windows, MyUtils, DateUtils, ExtCtrls, LocationUtils, JpegConv,
-  Graphics, ThumbNailUnit, Jpeg;
+  Graphics, ThumbNailUnit, Jpeg, RotImg, PhotoUtils;
 
 (*
 const
@@ -738,13 +739,15 @@ function MyCreateThumbNail( const FileName: string;
                             var   ErrorMsg: string;
                             Width: integer = THUMBNAILWIDTH;
                             Height: integer = THUMBNAILHEIGHT;
-                            OverWrite: boolean = false): TThumbnailProcessingStatus;
+                            OverWrite: boolean = false;
+                            RotateBy: integer = 0): TThumbnailProcessingStatus;
 var
   FileAgeImage, FileAgeThumb: integer;
   ThumbNailPath: string;
   mt: TMediaType;
   Ext: string;
-begin                                                       
+  ThumbImg: TRotateImage;
+begin
   result            := tps_Ignored;
   if OverWrite and FileExists(ThumbNailPathAndName) then
     MyDeleteFile(ThumbNailPathAndName, true, false);
@@ -763,6 +766,16 @@ begin
         if IsPhotoMedia(mt) then
           begin
             CreateThumbnail(FileName, ThumbNailPathAndName, Width, Height);
+            if RotateBy <> 0 then
+              begin
+                ThumbImg := TRotateImage.Create(nil);
+                try
+                  RotatePhoto(ThumbNailPathAndName, ThumbImg, RotateBy);
+                  SaveRotatedThumbnailToFile(ThumbNailPathAndName, ThumbImg);
+                finally
+                  FreeAndNil(ThumbImg);
+                end;
+              end;
             result := tps_CreatedUpdated;
           end else
         if MediaInfoArray[mt].MediaClass = mc_Video then

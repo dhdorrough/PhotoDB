@@ -449,7 +449,7 @@ type
     edtHighDay: TEdit;
     FillYearMonthDay1: TMenuItem;
     FromPhotoDateTime1: TMenuItem;
-    FillYearMonthDayfromPhotoDate1: TMenuItem;
+    FromPhotoDate1: TMenuItem;
     BrowseLookups1: TMenuItem;
     FunctionKeys1: TMenuItem;
     Filters1: TMenuItem;
@@ -628,7 +628,7 @@ type
     procedure CopyLocationInfo1Click(Sender: TObject);
     procedure PasteLocationInfo1Click(Sender: TObject);
     procedure ClearLocationIDforselectedrecords1Click(Sender: TObject);
-    procedure FillYearMonthDayfromPhotoDate1Click(Sender: TObject);
+    procedure FromPhotoDate1Click(Sender: TObject);
     procedure EditLocationInfo1Click(Sender: TObject);
     procedure CopyLatitude1Click(Sender: TObject);
     procedure CopyLongitude1Click(Sender: TObject);
@@ -842,6 +842,7 @@ type
     procedure SaveRotatedImageToFile(imgPhoto: TRotateImage);
     procedure UpdatePhotoInfo(BitMap: Graphics.TBitMap);
     procedure MoveFile(SrcKey: integer; const BaseName, OldFolderName, NewFolderName: string);
+    procedure UpdateDates(GoingToDateTime: boolean; OldDateFieldName, NewDateFieldName: string);
 //  procedure TempAfterScroll(Dataset: TDataSet);
   private
     fAllowRotation: boolean;
@@ -6359,6 +6360,7 @@ begin
   end;
 end;
 
+(*
 procedure TfrmPhotoDataBase.FillYearMonthDayfromPhotoDate1Click(
   Sender: TObject);
 var
@@ -6432,6 +6434,7 @@ begin
     FreeAndNil(TempPhotoTable);
   end;
 end;
+*)
 
 procedure TfrmPhotoDataBase.EditLocationInfo1Click(Sender: TObject);
 begin
@@ -7159,7 +7162,8 @@ begin
         begin
           DefaultExt := 'JPG';
           InitialDir := ForceBackSlash(gRootPath);
-          FileName   := InitialDir + '\*.jpg';
+          FileName   := InitialDir + '*.jpg';
+//        Filter     := 'Data files (*.*)|*.*';
           Filter     := BuildMediaFilter; // 'JPEG files (*.jpg)|*.jpg';
           UpdateInfo := fUpdateInfo;
           if Execute then
@@ -7558,6 +7562,7 @@ procedure TfrmPhotoDataBase.AddThumbnail1Click(Sender: TObject);
 var
   ErrorMsg, ThumbNailName: string;
   OverWrite: Boolean;
+  RotateBy: integer;
 begin
   ThumbNailName := ThumbNailPathAndName(tblPhotoTable.PathAndFileName);
   OverWrite := false;
@@ -7565,12 +7570,15 @@ begin
     OverWrite := YesFmt('The Thumbnail file "%s" already exists. Do you want to delete it?',
                    [ThumbNailName]);
 
+  RotateBy := RotationNeeded(tblPhotoTable.PathAndFileName);
+
   case MyCreateThumbNail( tblPhotoTable.PathAndFileName,
                           ThumbNailName,
                           ErrorMsg,
                           THUMBNAILWIDTH,
                           THUMBNAILHEIGHT,
-                          OverWrite) of
+                          OverWrite,
+                          RotateBy) of
     tps_CreatedUpdated:
       begin
         PhotoTableAfterScroll(tblPhotoTable); 
@@ -8318,16 +8326,20 @@ function TfrmPhotoDataBase.UpdateThumbnail(PhotoTable: TPhotoTable; var Msg: str
                                            OverWrite: boolean): TThumbnailProcessingStatus;
 var
   ErrorMsg, ThumbNailName: string;
+  RotateBy: integer;
 begin
   with PhotoTable do
     begin
       ThumbNailName := ThumbNailPathAndName(PathAndFileName);
+      RotateBy := RotationNeeded(PhotoTable.PathAndFileName);
+
       result        := MyCreateThumbNail( PathAndFileName,
                                           ThumbNailName,
                                           ErrorMsg,
                                           THUMBNAILWIDTH,
                                           THUMBNAILHEIGHT,
-                                          OverWrite);
+                                          OverWrite,
+                                          RotateBy);
       case result of
         tps_Ignored:
           Msg := Format('Thumbnail [%s] appears to be up to date', [ThumbNailName]);
@@ -10403,10 +10415,17 @@ end;
 
 procedure TfrmPhotoDataBase.EditThumbnail1Click(Sender: TObject);
 var
-  ThumbNailName: string;
+  ThumbNailName, Message: string;
 begin
   ThumbNailName := ThumbNailPathAndName(tblPhotoTable.PathAndFileName);
+  Message       := '';
+  
+  if not FileExists(ThumbNailName) then
+    CreateThumbNail(Message, true);
+
   EditPhotoUtil(ThumbNailName, CommonPhotoSettings.PhotoEditingProgram);
+
+  Update_Status( Message);
 end;
 
 procedure TfrmPhotoDataBase.Print1Click(Sender: TObject);
@@ -10415,17 +10434,79 @@ begin
 end;
 
 procedure TfrmPhotoDataBase.FromPhotoDateTime1Click(Sender: TObject);
+begin
+  with TempPhotoTable do
+    UpdateDates(false, PHOTODATETIME, PHOTODATE);
+end;
+
+procedure TfrmPhotoDataBase.FromPhotoDate1Click(Sender: TObject);
+begin
+  with TempPhotoTable do
+    UpdateDates(true, PHOTODATE, PHOTODATETIME);
+end;
+
+procedure TfrmPhotoDataBase.UpdateDates(GoingToDateTime: boolean; OldDateFieldName, NewDateFieldName: string);
 var
   Updated, Count, OldRecNo: integer;
-  YYYY, MM, DD: word;
-  OverWrite: boolean;
-begin
+  OldYYYY, OldMM, OldDD: word;
+  NewYYYY, NewMM, NewDD: word;
+  OverWrite,
+  ConfirmEachRecord: boolean;
+  mr: integer;
+  OldDateField, NewDateField: TField;
+
+  procedure UpdateThisRecord(NewYYYY, NewMM, NewDD: integer);
+  begin { UpdateThisRecord }
+    with TempPhotoTable do
+      begin
+        Edit;
+
+        fldYear.AsInteger     := NewYYYY;
+        fldMonth.AsInteger    := NewMM;
+        fldDay.AsInteger      := NewDD;
+
+        if GoingToDateTime then
+          NewDateField.AsDateTime := EncodeDate(NewYYYY, NewMM, NewDD)
+        else   // going to just date
+          NewDateField.AsString   := YearMonthDayToPhotoDate(NewYYYY, NewMM, NewDD);
+
+        fldUpdateReason.AsInteger := integer(ur_FillYearMonthDayFromPhotoDateTime);  // tested
+        Post;
+(*      Cancel;   // DEBUGGING !!!! *)
+        Inc(Updated);
+      end;
+  end; { UpdateThisRecord }
+
+  function OkToDoThisRecord(OldYYYY, OldMM, OldDD, NewYYYY, NewMM, NewDDD: integer): integer;
+  begin { OkToDoThisRecord }
+    with frmConfirmEachPhoto do
+      begin
+//      Question      := 'Do you want to change';
+        Caption1      := Format(' Year = %4d, Month = %2d, Day = %2d to', [OldYYYY, OldMM, OldDD]) + CRLF +
+                         Format(' Year = %4d, Month = %2d, Day = %2d?',   [NewYYYY, NewMM, NewDD]);
+//      Caption2      := TempPhotoTable.fldKey_Words.AsString;
+        PhotoFileName := TempPhotoTable.PathAndFileName;
+        result        := ShowModal;
+      end;
+  end; { OkToDoThisRecord }
+
+begin { UpdateDates }
   FreeAndNil(TempPhotoTable);
-  Overwrite := Yes('Overwrite pre-existing values in Year, Month and Day?');
+  OverWrite := false;
+
+  ConfirmEachRecord  := Yes('Do you want to confirm each update?');
+  if ConfirmEachRecord then
+    begin
+      FreeAndNil(frmConfirmEachPhoto);
+      frmConfirmEachPhoto := TfrmConfirmEachPhoto.Create(self, 'Update');
+    end
+  else
+    Overwrite := Yes('Overwrite pre-existing values in Year, Month and Day?');
+
   TempPhotoTable := TPhotoTable.Create( self,
                                         CommonPhotoSettings.PhotoDBDatabaseFileName,
                                         cFILENAMES,
-                                        []);
+                                        [optNoSyncDateFields]);
   try
     with TempPhotoTable do
       begin
@@ -10435,31 +10516,44 @@ begin
         SetSelectivityParserExpression(fExpression);
         Count          := 0;
         Updated        := 0;
+        OldDateField   := FieldByName(OldDateFieldName);
+        NewDateField   := FieldByName(NewDateFieldName);
         First;
         while not eof do
           begin
             OldRecNo := RecNo;
 
-            YYYY := 0;
-            MM   := 0;
-            DD   := 0;
-
-            if (not Empty(fldPhotoDateTime.AsString)) and
-                (Overwrite or
-                 (fldYear.AsInteger = 0) or
-                 (fldMonth.AsInteger = 0) or
-                 (fldDay.AsInteger = 0)) then
+            if (not Empty(OldDateField.AsString)) then
               begin
-                DecodeDate(fldPhotoDateTime.AsDateTime, YYYY, MM, DD);
-                Edit;
+                OldYYYY := fldYear.AsInteger;
+                OldMM   := fldMonth.AsInteger;
+                OldDD   := FldDay.AsInteger;
 
-                fldYear.AsInteger  := YYYY;
-                fldMonth.AsInteger := MM;
-                fldDay.AsInteger   := DD;
+                if GoingToDateTime then
+                  PhotoDateToYearMonthDay(OldDateField.AsString, NewYYYY, NewMM, NewDD)
+                else
+                  DecodeDate(OldDateField.AsDateTime, NewYYYY, NewMM, NewDD);
 
-                fldUpdateReason.AsInteger := integer(ur_FillYearMonthDayFromPhotoDateTime);  // tested
-                Post;
-                Inc(Updated);
+                mr := mrNone;
+                
+                if ConfirmEachRecord then
+                  mr := OkToDoThisRecord(OldYYYY, OldMM, OldDD, NewYYYY, NewMM, NewDD)
+                else
+                  begin
+                    if OverWrite then
+                      mr := mrOK else
+                    if (OldYYYY = 0) or (oldMM = 0) or (OldDD = 0) or
+                       (fldPhotoDate.AsString = '') or (fldPhotoDate.IsNull) then
+                      mr := mrOK;
+                  end;
+
+                if mr = mrCancel then
+                  Break
+                else
+                  if not ConfirmEachRecord then
+                    UpdateThisRecord(NewYYYY, NewMM, NewDD)
+                  else if mr in [mrYes, mrOk] then
+                    UpdateThisRecord(NewYYYY, NewMM, NewDD)
               end;
 
             if RecNo = OldRecNo then  // selectivity hasn't deleted record from set
@@ -10475,7 +10569,7 @@ begin
   finally
     FreeAndNil(TempPhotoTable);
   end;
-end;
+end;  { UpdateDates }
 
 procedure TfrmPhotoDataBase.cbScanCommentsClick(Sender: TObject);
 begin

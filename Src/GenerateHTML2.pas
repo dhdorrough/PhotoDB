@@ -936,8 +936,10 @@ var
           WriteLn(outfile, 'Click on photo for larger view');
           WriteLn(outfile, '<a href="http://RuthAndDan.net/">Home</a> &nbsp;');
           WriteLn(outfile, '<a href="http://RuthAndDan.net/SearchForm.asp">Search</a> &nbsp;', '<br/>');
+(*
           WriteLn(outfile, 'Report errors to: <a href="mailto:dhdorrough@r-and-d-systems.com?subject=Error on RuthAndDan.net"> dhdorrough@r-and-d-systems.com</a><br/>');
           WriteLn(outfile, 'Family Web Site Developed by <a href="http://r-and-d-systems.com/">R&amp;D Systems</a>; Canandaigua, NY 14424<br/>');
+*)
           WriteLn(outfile, CommonPhotoSettings.CopyRight);
           WriteLn(outfile, '</div>');
         
