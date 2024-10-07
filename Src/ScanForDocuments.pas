@@ -134,7 +134,7 @@ uses
   Math, JPeg, JpegConv, FileCtrl, StStrL,
   MyUtils, ShlObj, ActiveX, ComObj, DateUtils, ScanningOptions,
   PhotoDBCommonSettings, uPhotoDBOptions, GPSTrackingInfoUnit, MyTables_Decl,
-  PhotoUtils, GenerateHTML2;
+  PhotoUtils, GenerateHTML2{, uMakeHTML};
 
 const
   SMALLFONTSTR = '<font face="Verdana, Arial, Helvetica, Sans-Serif" size="-2">';
@@ -422,9 +422,11 @@ var
     ThumbNailPathName,
     ErrorMsg: string;
     tps: TThumbnailProcessingStatus;
+    RotateBy: integer;
   begin { GenerateThumbNail }
     ThumbNailPathName := ThumbNailPathAndName(FileName);
-    tps := MyCreateThumbNail(FileName, ThumbNailPathName, ErrorMsg);
+    RotateBy := RotationNeeded(tblPhotoTable.PathAndFileName);
+    tps := MyCreateThumbNail(FileName, ThumbNailPathName, ErrorMsg, THUMBNAILWIDTH, THUMBNAILHEIGHT, false, RotateBy);
     case tps of
       tps_CreatedUpdated:
         begin
