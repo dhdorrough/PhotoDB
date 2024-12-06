@@ -24,6 +24,9 @@ type
     RefCount1: TMenuItem;
     FillFieldinSelectedRecords1: TMenuItem;
     lblDistanceAway: TLabel;
+    N2: TMenuItem;
+    CopyLocation1: TMenuItem;
+    Button1: TButton;
     procedure CopyLatitudeLongitude1Click(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
     procedure FilterOptions1Click(Sender: TObject);
@@ -40,6 +43,7 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
     procedure ClearFilterOptions1Click(Sender: TObject);
+    procedure CopyLocation1Click(Sender: TObject);
 //  procedure FormResize(Sender: TObject);
   private
     { Private declarations }
@@ -616,5 +620,18 @@ begin
   ShowScrollBar(DbGrid1.Handle, SB_BOTH, True);
 end;
 *)
+
+procedure TfrmLocationsBrowser.CopyLocation1Click(Sender: TObject);
+begin
+  inherited;
+
+  with DataSet as TLocationsTable do
+    begin
+      gLocationID  := fldID.AsInteger;
+      gLatitude    := fldLatitude.AsFloat;
+      gLongitude   := fldLongitude.AsFloat;
+    end;
+  Clipboard.AsText := Format('%11.7f %11.7f', [gLatitude, gLongitude]);
+end;
 
 end.

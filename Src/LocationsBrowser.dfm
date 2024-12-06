@@ -1,28 +1,28 @@
 inherited frmLocationsBrowser: TfrmLocationsBrowser
   Left = 506
   Top = 342
-  Width = 1083
-  Height = 391
+  Width = 1092
+  Height = 373
   Caption = ' Locations Browser'
   PixelsPerInch = 96
   TextHeight = 14
   inherited lblStatus: TLabel
-    Left = 1024
-    Top = 316
+    Left = 849
+    Top = 292
   end
   object lblDistanceAway: TLabel [1]
     Left = 241
-    Top = 313
+    Top = 296
     Width = 82
     Height = 14
     Anchors = [akLeft, akBottom]
     Caption = 'lblDistanceAway'
   end
   inherited DBGrid1: TDBGrid
-    Left = 1
+    Left = 4
     Top = 2
-    Width = 1163
-    Height = 296
+    Width = 1065
+    Height = 283
     Columns = <
       item
         Expanded = False
@@ -84,17 +84,38 @@ inherited frmLocationsBrowser: TfrmLocationsBrowser
       end>
   end
   inherited DBNavigator1: TDBNavigator
-    Top = 309
+    Top = 291
     Width = 210
     Hints.Strings = ()
   end
   inherited btnClose: TButton
-    Left = 1081
-    Top = 329
+    Left = 893
+    Top = 287
     Caption = '&OK'
     Default = True
   end
+  object Button1: TButton [5]
+    Left = 976
+    Top = 287
+    Width = 75
+    Height = 25
+    Anchors = [akRight, akBottom]
+    Cancel = True
+    Caption = 'Cancel'
+    ModalResult = 2
+    TabOrder = 3
+  end
   inherited MainMenu1: TMainMenu
+    inherited Edit1: TMenuItem
+      object N2: TMenuItem
+        Caption = '-'
+      end
+      object CopyLocation1: TMenuItem
+        Caption = 'Copy Location'
+        ShortCut = 16451
+        OnClick = CopyLocation1Click
+      end
+    end
     inherited Navigate1: TMenuItem
       object N1: TMenuItem
         Caption = '-'

@@ -425,7 +425,7 @@ var
     RotateBy: integer;
   begin { GenerateThumbNail }
     ThumbNailPathName := ThumbNailPathAndName(FileName);
-    RotateBy := RotationNeeded(tblPhotoTable.PathAndFileName);
+    RotateBy := RotationNeeded(FileName);
     tps := MyCreateThumbNail(FileName, ThumbNailPathName, ErrorMsg, THUMBNAILWIDTH, THUMBNAILHEIGHT, false, RotateBy);
     case tps of
       tps_CreatedUpdated:

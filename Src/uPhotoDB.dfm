@@ -2477,6 +2477,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
         end
         object RatePhotos1: TMenuItem
           Caption = 'Rate Photos'
+          Enabled = False
           OnClick = RatePhotos1Click
         end
         object MatchSelectedFilestoFilesinFolder1: TMenuItem

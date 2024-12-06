@@ -6702,6 +6702,7 @@ procedure TfrmPhotoDataBase.FindLocation( aLocationSearchType: TLocationSearchTy
 var
   LocationsBrowser: TfrmLocationsBrowser;
   LocationsTable  : TLocationsTable;
+  mr              : integer;
 begin
   LocationsTable := TLocationsTable.Create( self,
                                             CommonPhotoSettings.PhotoDBDatabaseFileName, cLOCATIONS,
@@ -6748,7 +6749,8 @@ begin
             Assert(false, 'Unexpected LocationSearchType: st_Normal');
         end;
         LocationsTable.Locate(cID, tblPhotoTable.fldLocationID.AsInteger, []);
-        if ShowModal = mrOk then
+        mr := ShowModal;
+        if mr = mrOk then
           begin
             with LocationsTable do
               begin
@@ -11414,9 +11416,10 @@ begin
 end;
 
 procedure TfrmPhotoDataBase.DBRadioGroup1Click(Sender: TObject);
-begin
+begin   // This does not work. The rating change never gets saved.
   if fRatingPhotos then
     begin
+      tblPhotoTable.Edit;
       tblPhotoTable.Post;
       tblPhotoTable.Next;
       DBNavigator1.SetFocus;
