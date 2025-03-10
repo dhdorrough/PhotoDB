@@ -18,10 +18,8 @@ type
   TFileAcceptor = function {AcceptThisFile}(const FileName: string): boolean of object;
 
   THTMLGenerator = class(TForm)
-    cbIsRootDir: TCheckBox;
     cbProcessSubFolders: TCheckBox;
-    cbIncludeEmpty: TCheckBox;
-    Button1: TButton;
+    btnBegin: TButton;
     Button2: TButton;
     cbDeleteOldHTML: TCheckBox;
     lblStatus: TLabel;

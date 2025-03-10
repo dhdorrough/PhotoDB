@@ -116,6 +116,10 @@ type
 
   EOperatorAbort = class(Exception);
 
+  TSubFoldersList = class(TList)
+                      Destructor Destroy; Override;
+                    end;
+
   TfrmPhotoDataBase = class(TForm)
     MainMenu1: TMainMenu;
     miMoveFile: TMenuItem;
@@ -895,7 +899,7 @@ type
     fRatingPhotos: boolean;
     fReDisplayingThumbnails: boolean;
     fSaveFolder: string;
-    fSubFoldersList: TList;
+    fSubFoldersList: TSubFoldersList;
     fOldFileName: string;
     fChanged: TSetOfChangeReasons;
     fRefreshThumbnails: boolean;
@@ -1338,7 +1342,7 @@ procedure TfrmPhotoDataBase.PhotoTableFilterRecord(DataSet: TDataSet; var Accept
     Ext: string;
     Dummy: TField;
 
-  procedure IsCritical(Accept: boolean);  // When filtering on SceneInfo, some fields may be matched later
+  procedure IsCritical(Accept: boolean);  // When filtering on SceneInfo or Folder_NO, some fields may be matched later
   begin { IsCritical }
     if not Accept then
       Inc(CriticalMismatches);
@@ -2280,7 +2284,7 @@ begin { TfrmPhotoDataBase.CreateSubFoldersList }
           Exit;
         end;
         FreeAndNil(fSubFoldersList);
-        fSubFoldersList := TList.Create;
+        fSubFoldersList := TSubFoldersList.Create;
         fSubFoldersList.Add(Pointer(FolderNo));   // include the root folder
 
         TempFilePathsTable := TFilePathsTable.Create( self,
@@ -9595,7 +9599,6 @@ begin { TfrmPhotoDataBase.GenerateHTMLforSelectedFolders1Click }
     try
       with fHTMLGenerator do
         begin
-          cbIncludeEmpty.Checked      := false;   // should come from CommonSettings
           cbProcessSubFolders.Checked := true;    // force sub-folders to be processed
           cbDeleteOldHTML.Checked     := true;
           for i := 0 to fFolderList.Count-1 do
@@ -9621,7 +9624,6 @@ begin { TfrmPhotoDataBase.GenerateHTMLforSelectedFolders1Click }
               RowCount          := 2;        // should come from CommonSettings
               ColCount          := 3;        // should come from CommonSettings
               UpdateRecentOnly  := false;    // should come from CommonSettings
-              IncludeEmpty      := cbIncludeEmpty.Checked;     // should come from CommonSettings
               ProcessSubFolders := cbProcessSubFolders.Checked;    // force sub-folders to be processed
               DeleteOldHTML     := cbDeleteOldHTML.Checked;
               DayCount          := 0;        // irrelevent if UpdateRecentOnly is false
@@ -9637,15 +9639,15 @@ begin { TfrmPhotoDataBase.GenerateHTMLforSelectedFolders1Click }
 
               OnOrAfter         := Now - DayCount;
 
-              i := 0;
-              while i < fFolderList.Count do
+              i := fFolderList.Count-1;
+              while i >= 0  do
                 begin
                   FolderPath       := RemoveTrailingBackSlash(fFolderList[i]);
                   FolderName       := ExtractFileName(FolderPath);
                   ParentFolderPath := GetParentFolderPath(FolderPath);
                   ProcessFolder(ParentFolderPath, FolderName, FolderPath, '*.*');
                   Update_Status(Format('Processing: %d folders successfully processed', [fHTMLGenerator.FolderCount]));
-                  inc(i);
+                  Dec(i);
                 end;
             end;
         end;
@@ -12286,6 +12288,14 @@ begin
         ChDir(OldDir);
       end;
     end;
+end;
+
+{ TSubFoldersList }
+
+destructor TSubFoldersList.Destroy;
+begin
+//
+  inherited;
 end;
 
 end.
