@@ -14,7 +14,7 @@ object frmReplaceDialog: TfrmReplaceDialog
   Position = poScreenCenter
   DesignSize = (
     369
-    203)
+    202)
   PixelsPerInch = 96
   TextHeight = 13
   object leFindText: TLabeledEdit
@@ -39,7 +39,7 @@ object frmReplaceDialog: TfrmReplaceDialog
     EditLabel.Caption = 'Replace With'
     TabOrder = 1
   end
-  object OK: TButton
+  object btnOK: TButton
     Left = 232
     Top = 157
     Width = 115

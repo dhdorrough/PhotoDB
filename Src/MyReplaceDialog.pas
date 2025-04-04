@@ -10,7 +10,7 @@ type
   TfrmReplaceDialog = class(TForm)
     leFindText: TLabeledEdit;
     leReplaceText: TLabeledEdit;
-    OK: TButton;
+    btnOK: TButton;
     cbConfirmEachRecord: TCheckBox;
   private
     function GetFindText: string;

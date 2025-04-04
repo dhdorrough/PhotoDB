@@ -23,6 +23,8 @@ type
     procedure SetCaption2(const Value: string);
     procedure SetPhotoFileName(const Value: string);
     procedure SetQuestion(const Value: string);
+    function GetCaption1: string;
+    function GetCaption2: string;
     { Private declarations }
   public
     { Public declarations }
@@ -31,8 +33,10 @@ type
     property PhotoFileName: string
              write SetPhotoFileName;
     property Caption1: string
+             read GetCaption1
              write SetCaption1;
     property Caption2: string
+             read GetCaption2
              write SetCaption2;
     constructor Create(aOwner: TComponent; const ProcessType: string; AllowRotation: boolean = true); reintroduce;
   end;
@@ -56,6 +60,16 @@ begin
   fAllowRotation := AllowRotation;
   Caption1     := Format('%s this record?', [ProcessType]);
   Caption2     := '';
+end;
+
+function TfrmConfirmEachPhoto.GetCaption1: string;
+begin
+  result := lblCaption1.Caption;
+end;
+
+function TfrmConfirmEachPhoto.GetCaption2: string;
+begin
+  result := lblCaption2.Caption;
 end;
 
 procedure TfrmConfirmEachPhoto.SetCaption1(const Value: string);
@@ -86,7 +100,7 @@ begin
                       DBImage1,
                       Panel1,
                       mc,
-                      true,
+                      fAllowRotation,
                       CommonPhotoSettings.PhotoEditingProgram,
                       WasEdited)
     end

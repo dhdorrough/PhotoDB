@@ -1101,7 +1101,7 @@ uses
   HikingSettingsUnit, ConfirmEachPhoto, Variants, VideoStuff2
 {$IfDef dExif2}
   , dMetadata
-{$endIf}  ;
+{$endIf}  , ProShowParams;
 
 const
   SCROLLBOX_TOP = 40;
@@ -4552,95 +4552,158 @@ procedure TfrmPhotoDataBase.AddKeyWordToSelectedPhotos1Click(
   const
     Delims = ' ,\-.()_';
   var
-    Count, MaxCount, Fixed: integer;
-    ReqKeyWord, KeyWords: string;
+    Count, Updated: integer;
+    ReqKeyWord, NewKeyWords, KeyWords: string;
     wc: integer;
     aWord: string;
-    HasChanged, HasKeyWord: boolean; i: integer;
+    HasChanged, HasKeyWord, OK: boolean;
+    i, mr, TotalRecsInSet: integer;
     LogFileName, Temp: string;
 begin
+  if Assigned(frmReplaceDialog) then
+    FreeAndNil(frmReplaceDialog);
+
   // force every selected photo to include the specified key word
-  if not GetString('Get String Value', 'Required Key Word', ReqKeyWord) then
-    exit;
+//if not GetString('Get String Value', 'Required Key Word', ReqKeyWord) then
+//  exit;
 
-  FreeAndNil(tempPhotoTable);
-  tempPhotoTable := TPhotoTable.Create( self,
-                                        CommonPhotoSettings.PhotoDBDatabaseFileName,
-                                        cFILENAMES,
-                                        []);
-  LogFileName := CalcLogFileName('KeyWord Changes.txt');
-  AssignFile(fLogfile, LogFileName);
-  ReWrite(fLogFile);
-  WriteLn(fLogFile, 'KeyWord Changes');
-  Count          := 0;
-  Fixed          := 0;
+  frmReplaceDialog := TfrmReplaceDialog.Create(self);
+  with frmReplaceDialog do
+    begin
+      Caption               := 'Add KeyWord dialog';
+      leReplaceText.Visible := false;
+      leFindText.EditLabel.Caption := 'Add this';
+      btnOK.Caption         := 'Begin';
+    end;
+
   try
-    with TempPhotoTable do
+    if frmReplaceDialog.ShowModal = mrOK then
       begin
-        OnFilterRecord := PhotoTableFilterRecord;
-        Filtered       := true;
-        Active         := true;
-        SetSelectivityParserExpression(fExpression);
-        MaxCount       := TotalRecordCount;
-        First;
-        while not eof do
-          begin
-            KeyWords := TempPhotoTable.fldKEY_WORDS.AsString;
-            Edit;
+        FreeAndNil(frmConfirmEachPhoto);
+        ReqKeyWord := frmReplaceDialog.FindText;
+        frmConfirmEachPhoto := TfrmConfirmEachPhoto.Create(self, 'Add', fAllowRotation
+            {fAllowRotation was FALSE because I was getting "Out of Memory" when it attempted to rotate some photos});
 
-            HasChanged := false;
-            wc := WordCountL(KeyWords, DELIMS);
-            HasKeyWord := false;
-            if wc > 1 then
-              begin
-                for i := 1 to wc do
-                  begin
-                    aWord := ExtractWordL(i, KeyWords, DELIMS);
-                    if SameText(aWord, ReqKeyWord) then
-                      begin
-                        HasKeyWord := true;
-                        break;
-                      end;
-                  end;
-              end;
+        FreeAndNil(tempPhotoTable);
+        tempPhotoTable := TPhotoTable.Create( self,
+                                              CommonPhotoSettings.PhotoDBDatabaseFileName,
+                                              cFILENAMES,
+                                              []);
+        LogFileName := CalcLogFileName('KeyWord Changes.txt');
+        AssignFile(fLogfile, LogFileName);
+        ReWrite(fLogFile);
+        WriteLn(fLogFile, 'KeyWord Changes: ', DateTimeToStr(Now));
+        Count          := 0;
+        Updated        := 0;
+        TotalRecsInSet := 0;
+        try
+          with TempPhotoTable do
+            begin
+              OnFilterRecord := PhotoTableFilterRecord;
+              Filtered       := true;
+              Active         := true;
+              SetSelectivityParserExpression(fExpression);
 
-            if not HasKeyWord then
-              HasKeyWord := Pos(UpperCase(ReqKeyWord), UpperCase(KeyWords)) > 0;
+              // count the total records in the set
+              First;
+              TotalRecsInSet := 0;
+              while not Eof do
+                begin
+                  Inc(TotalRecsInSet);
+                  Next;
+                end;
 
-            if not HasKeyWord then
-              begin
-                KeyWords   := KeyWords + '; ' + ReqKeyWord;
-                HasChanged := true;
-              end;
+              First;
+              while not eof do
+                begin
+                  KeyWords := TempPhotoTable.fldKEY_WORDS.AsString;
+                  Edit;
 
-            if HasChanged then
-              begin
-                WriteLn(fLogFile, 'Before: ', fldKey_Words.AsString);
-                Writeln(fLogFile, 'After:  ', KeyWords);
-                WriteLn(fLogFile);
+                  HasChanged := false;
+                  wc := WordCountL(KeyWords, DELIMS);
+                  HasKeyWord := false;
+                  if wc > 1 then
+                    begin
+                      for i := 1 to wc do
+                        begin
+                          aWord := ExtractWordL(i, KeyWords, DELIMS);
+                          if SameText(aWord, ReqKeyWord) then
+                            begin
+                              HasKeyWord := true;
+                              break;
+                            end;
+                        end;
+                    end;
 
-                fldKEY_WORDS.AsString := KeyWords;
-                fldUpdateReason.AsInteger := integer(ur_KeywordsChanged); // tested
-                Post;
-                inc(Fixed);
-              end
-            else
-              Cancel;
+                  if not HasKeyWord then
+                    HasKeyWord := Pos(UpperCase(ReqKeyWord), UpperCase(KeyWords)) > 0;
 
-            Next;
-            inc(Count);
-            Update_Status( Format('Processed/Fixed/Max %d/%d/%d', [Count, Fixed, MaxCount]));
-          end;
+                  if not HasKeyWord then
+                    begin
+                      NewKeyWords   := KeyWords + '; ' + ReqKeyWord;
+                      HasChanged := true;
+                    end;
+
+                  if HasChanged then
+                    begin
+                      OK := true;
+                      if frmReplaceDialog.cbConfirmEachRecord.Checked then
+                        with frmConfirmEachPhoto do
+                          begin
+                            Question := Format('Add the keyword "%s" to this photo?', [ReqKeyWord]);
+                            Caption1 := Format('Change key words in record key [%d] ' + CRLF +
+                                                'from [%s]' + CRLF +
+                                                'to   [%s]?',
+                                               [fldKey.AsInteger,
+                                                KeyWords,
+                                                NewKeyWords]);
+                            Caption2 := Format('Updated/processed/Max: %d/%d/%d', [Updated, Count, TotalRecsInSet]);
+                            PhotoFileName := tempPhotoTable.PathAndFileName;
+                            try
+                              mr := ShowModal;
+                              if mr = mrCancel then
+                                break;
+                              OK := mr = mrYes;
+                            except
+                              on e:Exception do
+                                OK := false; // probably "out of memory" on the rotate
+                            end;
+                          end;
+
+                      if OK then
+                        begin
+                          WriteLn(fLogFile, 'Before: ', fldKey_Words.AsString);
+                          Writeln(fLogFile, 'After:  ', NewKeyWords);
+                          WriteLn(fLogFile);
+
+                          fldKEY_WORDS.AsString := NewKeyWords;
+                          fldUpdateReason.AsInteger := integer(ur_KeywordsChanged); // tested
+                          Post;
+                          inc(Updated);
+                        end;
+                    end
+                  else
+                    Cancel;
+
+                  Next;
+                  inc(Count);
+                  Update_Status( Format('Processed/Updated/Max %d/%d/%d', [Count, Updated, TotalRecsInSet]));
+                end;
+            end;
+        finally
+          Update_Status( Format('COMPLETE. %d records processed, %d recs updated, %d possible', [Count, Updated, TotalRecsInSet]));
+          tempPhotoTable.Active := false;
+          FreeAndNil(tempPhotoTable);
+          FreeAndNil(frmConfirmEachPhoto);
+          tblPhotoTable.Refresh;
+
+          CloseFile(fLogFile);
+          temp := Format('Notepad.exe "%s"', [LogFileName]);
+          FileExecute(temp, false);
       end;
+    end;
   finally
-    Update_Status( Format('COMPLETE. %d records processed, %d recs updated', [Count, Fixed]));
-    tempPhotoTable.Active := false;
-    FreeAndNil(tempPhotoTable);
-    tblPhotoTable.Refresh;
-
-    CloseFile(fLogFile);
-    temp := Format('Notepad.exe "%s"', [LogFileName]);
-    FileExecute(temp, false);
+    FreeAndNil(frmReplaceDialog);
   end;
 end;
 
@@ -6940,6 +7003,7 @@ var
   LeftPart, RightPart: string;
   ConfirmEachRecord, OK: boolean;
   NewKeyWords: string;
+  LogFileName: string;
 begin
   frmReplaceDialog  := TfrmReplaceDialog.Create(self);
   ConfirmEachRecord := false;
@@ -6951,6 +7015,11 @@ begin
           FreeAndNil(frmConfirmEachPhoto);
           frmConfirmEachPhoto := TfrmConfirmEachPhoto.Create(self, 'Update');
         end;
+
+      LogFileName := CalcLogFileName('KeyWord Text Changes.txt');
+      AssignFile(fLogfile, LogFileName);
+      ReWrite(fLogFile);
+      WriteLn(fLogFile, 'KeyWord Changes: ', DateTimeToStr(Now));
 
       OrgRecNo       := tblPhotoTable.RecNo;
       tempPhotoTable := TPhotoTable.Create( self,
@@ -6989,6 +7058,12 @@ begin
                                            [fldKey.AsInteger,
                                             KeyWords,
                                             NewKeyWords]);
+
+//                      WriteLn(fLogFile, 'Changed from: ');
+                        Writeln(fLogFile, '':5, KeyWords);
+                        WriteLn(fLogFile, '':5, NewKeyWords);
+                        WriteLn(fLogFile);
+
                         Caption2 := Format('Updated/processed: %d/%d', [Updated, Count]);
                         PhotoFileName := tempPhotoTable.PathAndFileName;
                         mr := ShowModal;
@@ -7028,6 +7103,8 @@ begin
     finally
       FreeAndNil(frmConfirmEachPhoto);
       FreeAndNil(frmReplaceDialog);
+      CloseFile(fLogFile);
+      EditTextFile(LogFileName);
     end;
 end;
 
@@ -11305,88 +11382,101 @@ var
   Desc: string;
   Lat, Lon: double;
   LocationBased: boolean;
+  mr: integer;
+  DateStr: string;
 begin
   LocationBased := (fCurrentOrder in [coDistanceFromLocation, coNearness]); // only relevent when doing location based sorts
 
-  OutFileName := 'C:\Users\dhdor\Videos\Video Projects\FileNames.csv';
-  if BrowseForFile('FileNames List filename', OutFileName, 'csv') then
-    begin
-      AssignFile(OutFile, OutFileName);
-      ReWrite(OutFile);
-      WriteLn(OutFile, 'POI #',  ',', // This is actually the POI number
-                       'Key #', ',',
-                       'FileName', ',',
-                       'Location', ',',
-                       'Latitude', ',', 'Longitude', ',',
-                       'Key Words',
-                       'Photographer',
-                       'DateTime');
-      tempPhotoTable  := TPhotoTable.Create( self,
-                                            CommonPhotoSettings.PhotoDBDatabaseFileName,
-                                            cFILENAMES,
-                                            [optNoUpdateDate]);
-      try
-        with tempPhotoTable do
-          begin
-{$IfDef dhd}
-            onGetBoundariesTable := GetBoundariesTable;
-{$EndIf}
-            Active         := true;
-            SetSelectivityParserExpression(fExpression);
+  OutFileName   := 'V:\FileNames.csv';
+  frmShowParams := TfrmShowParams.Create(self);
+  frmShowParams.leShowFile.Text := OutFileName;
+  try
+    mr := frmShowParams.ShowModal;
+    if mr = mrOK then
+      begin
+        AssignFile(OutFile, frmShowParams.leShowFile.Text);
+        ReWrite(OutFile);
+        WriteLn(OutFile, 'POI #',  ',', // This is actually the POI number
+                         'Key #', ',',
+                         'FileName', ',',
+                         'Location', ',',
+                         'Latitude', ',', 'Longitude', ',',
+                         'Key Words', ',',
+                         'Photographer', ',',
+                         'DateTime');
+        tempPhotoTable  := TPhotoTable.Create( self,
+                                              CommonPhotoSettings.PhotoDBDatabaseFileName,
+                                              cFILENAMES,
+                                              [optNoUpdateDate]);
+        try
+          with tempPhotoTable do
+            begin
+  {$IfDef dhd}
+              onGetBoundariesTable := GetBoundariesTable;
+  {$EndIf}
+              Active         := true;
+              SetSelectivityParserExpression(fExpression);
 
-            SetOrder(fCurrentOrder);
-            if LocationBased then
-              if not Yes('Current Sort Order <> Nearness. Proceed anyway') then
-                raise Exception.Create('Operate abort. Sort order <> "Nearness"')
+              SetOrder(fCurrentOrder);
+              if LocationBased then
+                if not Yes('Current Sort Order <> Nearness. Proceed anyway') then
+                  raise Exception.Create('Operate abort. Sort order <> "Nearness"')
+                else
+                  DontAskAgain := true
               else
-                DontAskAgain := true
-            else
-              DontAskAgain := true;
-                
-            OnFilterRecord := PhotoTableFilterRecord;
-            Filtered       := true;
-            POINr          := 0;
-            while not Eof do
-              begin
-                if (not fldDistance.IsNull) or (not LocationBased) then
-                  begin
-                    if (POINr mod 10) = 0 then
-                      Update_Status(Format('Writing Record %d', [POINr]));
+                DontAskAgain := true;
 
-                    if LocationBased and (not DontAskAgain) and (POINr <> fldDistance.AsInteger) then
-                      if Yes('POI field (distance) may not be in sequential order. Proceed anyway? ') then
-                        DontAskAgain := true
+              OnFilterRecord := PhotoTableFilterRecord;
+              Filtered       := true;
+              POINr          := 0;
+              while not Eof do
+                begin
+                  if (not fldDistance.IsNull) or (not LocationBased) then
+                    begin
+                      if (POINr mod 10) = 0 then
+                        Update_Status(Format('Writing Record %d', [POINr]));
+
+                      if LocationBased and (not DontAskAgain) and (POINr <> fldDistance.AsInteger) then
+                        if Yes('POI field (distance) may not be in sequential order. Proceed anyway? ') then
+                          DontAskAgain := true
+                        else
+                          Exit;
+
+                      if fldLocationID.AsInteger > 0 then
+                        with LocationsTable do
+                          Desc := GetLocationDescription(fldLocationID.AsInteger) // get location description and position the table
                       else
-                        Exit;
+                        Desc := '';
 
-                    if fldLocationID.AsInteger > 0 then
-                      with LocationsTable do
-                        Desc := GetLocationDescription(fldLocationID.AsInteger) // get location description and position the table
-                    else
-                      Desc := '';
+                      Lat := GetLatitude;
+                      Lon := GetLongitude;
+                      DateStr := IIF(frmShowParams.rgDateFormat.ItemIndex = 0,
+                                     fldPhotoDate.AsString,      { 0=YYYYMMDD }
+                                     fldPhotoDateTime.AsString); { 1=MM/DD/YYYY }
 
-                    Lat := GetLatitude;
-                    Lon := GetLongitude;
-                    if (not LocationBased) or ((Lat <> 0.0) or (Lon <> 0.0)) then
-                      WriteLn(OutFile, 'P' + RZero(fldDistance.AsInteger, 4),  ',', // This is actually the POI number
-                                       fldKey.AsInteger, ',',
-                                       Quoted(PathAndFileName), ',',
-                                       Quoted(Desc), ',',
-                                       Lat:10:6, ',', Lon:10:6, ',',
-                                       Quoted(PrintableOnly2(Copy(fldKey_Words.AsString, 1, 80))), ',', 
-                                       Quoted(Trim(CopyRightOwner)), ',',
-                                       fldPhotoDateTime.AsString);
-                  end;
-                Next;
-                Inc(POINr);
-              end;
-            Update_Status(Format('Complete. %d records written to %s', [POINr, OutFileName]));
-          end;
-      finally
-        FreeAndNil(tempPhotoTable);
-        CloseFile(OutFile);
+                      if (not LocationBased) or ((Lat <> 0.0) or (Lon <> 0.0)) then
+                        WriteLn(OutFile, 'P' + RZero(fldDistance.AsInteger, 4),  ',', // This is actually the POI number
+                                         fldKey.AsInteger, ',',
+                                         Quoted(PathAndFileName), ',',
+                                         Quoted(Desc), ',',
+                                         Lat:10:6, ',', Lon:10:6, ',',
+                                         Quoted(PrintableOnly2(Copy(fldKey_Words.AsString, 1, 80))), ',',
+                                         Quoted(Trim(CopyRightOwner)), ',',
+                                         DateStr);
+                    end;
+                  Next;
+                  Inc(POINr);
+                end;
+              Update_Status(Format('Complete. %d records written to %s', [POINr, OutFileName]));
+            end;
+        finally
+          FreeAndNil(tempPhotoTable);
+          CloseFile(OutFile);
+        end;
       end;
-    end;
+  finally
+    FreeAndNil(frmShowParams);
+  end;
 end;
 
 procedure TfrmPhotoDataBase.ImportRecords1Click(Sender: TObject);

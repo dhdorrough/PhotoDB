@@ -13,8 +13,8 @@ object frmConfirmEachPhoto: TfrmConfirmEachPhoto
   OldCreateOrder = False
   Position = poScreenCenter
   DesignSize = (
-    776
-    538)
+    768
+    530)
   PixelsPerInch = 96
   TextHeight = 14
   object lblQuestion: TLabel
@@ -43,10 +43,16 @@ object frmConfirmEachPhoto: TfrmConfirmEachPhoto
   object lblCaption2: TLabel
     Left = 24
     Top = 496
-    Width = 52
+    Width = 77
     Height = 14
     Anchors = [akLeft, akBottom]
     Caption = 'lblCaption2'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Courier New'
+    Font.Style = []
+    ParentFont = False
   end
   object btnOk: TButton
     Left = 584

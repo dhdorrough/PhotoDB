@@ -2424,16 +2424,16 @@ object frmPhotoDataBase: TfrmPhotoDataBase
         OnClick = AddKeyWordToSelectedPhotos1Click
       end
       object ReplaceTextinSelected1: TMenuItem
-        Caption = 'Replace Text in Selected Records...'
+        Caption = 'Replace KeyWord Text in Selected Records...'
         OnClick = ReplaceTextinSelected1Click
-      end
-      object CopySelectedRecords1: TMenuItem
-        Caption = 'Copy Selected Records...'
-        OnClick = CopySelectedRecords1Click
       end
       object UpdateFieldinSelectedRecords1: TMenuItem
         Caption = 'Update Field in Selected Records...'
         OnClick = UpdateFieldinSelectedRecords1Click
+      end
+      object CopySelectedRecords1: TMenuItem
+        Caption = 'Copy Selected Records...'
+        OnClick = CopySelectedRecords1Click
       end
       object SetFileDateTimetoPhotoDateTimeforselectedrecords1: TMenuItem
         Caption = 'Set FileDateTime to PhotoDateTime for selected records...'
@@ -2509,7 +2509,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
         OnClick = ScanforMissingFiles1Click
       end
       object ScanforMissngFilesandUpdate1: TMenuItem
-        Caption = 'Scan for Missng Files and Update'
+        Caption = 'Scan for Missing Files and Update'
         OnClick = ScanforMissngFilesandUpdate1Click
       end
       object ScanforFilesnotinDataBase1: TMenuItem
