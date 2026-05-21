@@ -439,6 +439,9 @@ type
 
   EInvalidLocation = class(Exception);
   EMyUpdateError   = class(Exception);
+  ELocateError     = class(Exception);
+
+  TPhotoTableFilterProcedure = procedure {PhotoTableFilterRecord}(DataSet: TDataSet; var Accept: Boolean) of object;
 
 function RemoveRootString(const Path: string): string;
 function ScanForHighestFolderNumber(Starting_Number: integer; const DatabaseFileName: string): integer;
@@ -812,7 +815,7 @@ function TPhotoTable.MyLocateRecord(aFileName, aFolderPath: string): boolean;
 var
   mode: TSearch_Type;
   Temp: string;
-begin
+begin { MyLocateRecord }
   try
     aFolderPath     := RemoveTrailingBackSlash(RemoveRootString(aFolderPath));
     IndexFieldNames := FILE_NAME;
@@ -842,13 +845,10 @@ begin
     else
       result := false;
   except
-    on e: Exception do
-      raise Exception.CreateFmt('Exception while locating "%s\%s"' + CRLF + '%s.',
-                                [aFolderPath, aFileName, e.Message]);
-//  on e:Exception do
-//    result := false;
+    on e:Exception do
+      result := false;
   end;
-end;
+end; { MyLocateRecord }
 
 function TPhotoTable.DateIsAGuess: boolean;
 const
@@ -1408,18 +1408,19 @@ begin
           end
     end;
 
-  if (not fldPhotoDateTime.IsNull) and (MyUtils.IsValidDate(fldPhotoDateTime.AsString)) then
-    begin
-      if Empty(fldPhotoDate.AsString) then
-        begin
-          fldPhotoDate.AsString := YYYYMMDD(fldPhotoDateTime.AsDateTime);
-          DecodeDate(fldPhotoDateTime.AsDateTime, YYYY, MM, DD);
-          fldYear.AsInteger  := YYYY;
-          fldMonth.AsInteger := MM;
-          fldDay.AsInteger   := DD;
-        end;
-    end;
-    
+  if not (optNoSyncDateFields in Options) then
+    if (not fldPhotoDateTime.IsNull) and (MyUtils.IsValidDate(fldPhotoDateTime.AsString)) then
+      begin
+        if Empty(fldPhotoDate.AsString) then
+          begin
+            fldPhotoDate.AsString := YYYYMMDD(fldPhotoDateTime.AsDateTime);
+            DecodeDate(fldPhotoDateTime.AsDateTime, YYYY, MM, DD);
+            fldYear.AsInteger  := YYYY;
+            fldMonth.AsInteger := MM;
+            fldDay.AsInteger   := DD;
+          end;
+      end;
+
   if not (optNoUpdateDate in Options) then
     begin
       if fldUpdateReason.IsNull then
@@ -1463,7 +1464,7 @@ end;
 
 procedure TPhotoTable.UpdatePhotoDateDay(sender: TField);
 begin
-  if not Inhibited then
+  if (not Inhibited) and (not (optNoSyncDateFields in fOptions)) then
     UpdatePhotoDate;
 end;
 

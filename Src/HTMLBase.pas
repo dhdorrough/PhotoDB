@@ -1,148 +1,25 @@
-unit GenerateHTML2;
-
-// 4/3/2015 Created from uMakeHTML today
+unit HTMLBase;
 
 interface
 
 uses
-  Classes, PDB_Decl, PDBTables, Forms, Controls, StdCtrls, CheckLst;
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, ComCtrls, StdCtrls, ExtCtrls, PDB_Decl, PDBTables, Protocol_Decl,
+  PhotoDBCommonSettings;
 
 const
   HTML_MEDIA   = [mt_Jpeg, mt_JPG, mt_RM, mt_RV, mt_RAD
                   {, mt_WMV, mt_MOV, mt_MPG, mt_MP4, mt_M2TS}  // 12/14/2016 - removed these because they shouldn't be added to generated HTML?
                   ];
 
-type
-  TStatusUpdate = procedure {Update_Status}(const Msg: string; LineNo: integer = 0) of object;
-  TFolderProcessed = procedure {FolderProcessed} (FolderName: string) of object;
-  TFileAcceptor = function {AcceptThisFile}(const FileName: string): boolean of object;
-
-  THTMLGenerator = class(TForm)
-    cbProcessSubFolders: TCheckBox;
-    btnBegin: TButton;
-    Button2: TButton;
-    cbDeleteOldHTML: TCheckBox;
-    lblStatus: TLabel;
-    ListBox1: TCheckListBox;
-    procedure ListBox1ClickCheck(Sender: TObject);
-    procedure FormShow(Sender: TObject);
-  private
-    fDBRecsUpdated: integer;
-    fColCount: integer;
-    fDayCount: integer;
-    fDeleteOldHTML: boolean;
-    fFileNameInfo: TFileNameInfo;
-    fFolderCount: integer;
-    fIncludeEmpty: boolean;
-    fOnOrAfter: TDateTime;
-    fProcessSubFolders: boolean;
-    fRowCount: integer;
-    fStartTime: double;
-    fTreeList: TStringList;
-    fThumbCount: integer;
-    fUpdateRecentOnly: boolean;
-    fYear: integer;
-
-    tblPhotoTable: TPhotoTable;
-    fLevel: integer;
-    fFoldersProcessed: integer;
-    fTempFilePathsTable: TFilePathsTable;
-
-    fFileAcceptor: TFileAcceptor;
-    fOnUpdateStatus: TStatusUpdate;
-    fOnUpdateLogFile: TStatusUpdate;
-    fOnUpdateThumbStatus: TStatusUpdate;
-    fAfterFolderProcessed: TFolderProcessed;
-
-    procedure UpdateStatusProc(const Msg: string; LineNo: integer = 0);
-    procedure SetIncludeEmpty(const Value: boolean);
-    procedure SetProcessSubFolders(const Value: boolean);
-    procedure SetStartTime(const Value: double);
-  public
-    procedure ProcessFolder(CallerTitle, FolderName, path, WildName: string);
-    Constructor Create(aOwner: TComponent); override;
-    Destructor Destroy; override;
-
-    property DBRecsUpdated: integer
-             read fDBRecsUpdated
-             write fDBRecsUpdated;
-    property DayCount: integer
-             read fDayCount
-             write fDayCount;
-    property ColCount: integer
-             read fColCount
-             write fColCount;
-    property DeleteOldHTML: boolean
-             read fDeleteOldHTML
-             write fDeleteOldHTML;
-    property FileNameInfo: TFileNameInfo
-             read fFileNameInfo
-             write fFileNameInfo;
-    property FolderCount: integer
-             read fFolderCount
-             write fFolderCount;
-    property IncludeEmpty: boolean
-             read fIncludeEmpty
-             write SetIncludeEmpty;
-    property OnOrAfter: TDateTime
-             read fOnOrAfter
-             write fOnOrAfter;
-    property ProcessSubFolders: boolean
-             read fProcessSubFolders
-             write SetProcessSubFolders;
-    property AfterFolderProcessed: TFolderProcessed
-             read fAfterFolderProcessed
-             write fAfterFolderProcessed;
-    property RowCount: integer
-             read fRowCount
-             write fRowCount;
-    property TreeList: TStringList
-             read fTreeList
-             write fTreeList;
-    property ThumbCount: integer
-             read fThumbCount
-             write fThumbCount;
-    property UpdateRecentOnly: boolean
-             read fUpdateRecentOnly
-             write fUpdateRecentOnly;
-    property StartTime: double
-             read fStartTime
-             write SetStartTime;
-    property FileAcceptor: TFileAcceptor
-             read fFileAcceptor
-             write fFileAcceptor;
-    property OnUpdateStatus: TStatusUpdate
-             read fOnUpDateStatus
-             write fOnUpDateStatus;
-    property OnUpdateThumbStatus: TStatusUpdate
-             read fOnUpdateThumbStatus
-             write fOnUpdateThumbStatus;
-    property OnUpdateLogFile: TStatusUpdate
-             read fOnUpdateLogFile
-             write fOnUpdateLogFile;
-  end;
-
-procedure GenerateIndexPage(const FolderName, path: string);
-
-implementation
-
-{$R *.DFM}
-
-uses
-  Windows, SysUtils, Math, MyUtils, PhotoDBCommonSettings, PDBUtils, StStrL, DateUtils,
-  Types, PhotoUtils;
-
-const
   FATTR = faAnyFile-faDirectory-faHidden-faSysFile-faVolumeID;
   FATTR2 = faAnyFile-faHidden-faSysFile-faVolumeID;
 
-type
+  CREATETHUMBS = TRUE;
 
-  TMediaList = class(TStringList)
-  public
-    Destructor Destroy; override;
-    function HtmlMediaCount: integer;
-  end;
+type
+  TFileAcceptor    = function {AcceptThisFile}(const FileName: string): boolean of object;
+  TStatusUpdate    = procedure {Update_Status}(const Msg: string; LineNo: integer = 0) of object;
 
   TImageInfo = class
   public
@@ -157,90 +34,210 @@ type
     function IncludeThisPhoto: boolean;
   end;
 
-  procedure GenerateIndexPage(const FolderName, path: string);
-    var
-      lfn: string;
-      OutFile: textfile;
-  begin { GenerateIndexPage }
-    lfn   := Format('%s\%s.htm', [path, 'INDEX']);
-    AssignFile(OutFile, lfn);
-    ReWrite(OutFile);
-    try
-      WriteLn(outfile, '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">');
-      WriteLn(outfile, '<html lang="en-US" xml:lang="en-US" xmlns="http://www.w3.org/1999/xhtml">');
-      WriteLn(outfile, '<head><title>', FolderName,'</title>');
+  TfrmHTMLBase = class(TForm)
+    cbProcessSubFolders: TCheckBox;
+    cbDeleteOldHTML: TCheckBox;
+    edtLocalCSS: TEdit;
+    edtRemoteCSS: TEdit;
+    lblStatus: TLabel;
+    btnBegin: TButton;
+    btnCancel: TButton;
+    rgProtocol: TRadioGroup;
+    ProgressBar1: TProgressBar;
+    lblProgressInfo: TLabel;
+    rgFileReference: TRadioGroup;
+    Label1: TLabel;
+    leRowCount: TLabeledEdit;
+    leColCount: TLabeledEdit;
+//  procedure cbUseLocalCSSClick(Sender: TObject);
+    procedure btnBeginClick(Sender: TObject);
+    procedure rgFileReferenceClick(Sender: TObject);
+    procedure leRowCountExit(Sender: TObject);
+    procedure leColCountExit(Sender: TObject);
+    procedure btnCancelClick(Sender: TObject);
+//  procedure cbUseRemoteCSSClick(Sender: TObject);
+  private
+    fIncludeEmpty: boolean;
+    fLevel: integer;
+    fProcessSubFolders: boolean;
+    fSavedCursor: TCursor;
+    fTempFilePathsTable: TFilePathsTable;
+    fTreeList: TStringList;
+    fYear: integer;
+    FileNameInfo: TFileNameInfo;
+    fFolderCount: integer;
+    fDeleteOldHTML: boolean;
+    fOnOrAfter: TDateTime;
+    fColCount: word;
+    fRowCount: word;
 
-      if CommonPhotoSettings.UseLocalCSS then
-        WriteLn(outfile, '<link rel="stylesheet" type="text/css" href="', CommonPhotoSettings.LocalCSSLfn, '" />')
-      else
-        WriteLn(outfile, '<link rel="stylesheet" type="text/css" href="', CommonPhotoSettings.RemoteCSSLfn, '" />');
+    procedure SetIncludeEmpty(const Value: boolean);
+    procedure SetLocalCSSLfn(const Value: string);
+    procedure SetRemoteCSSLFN(const Value: string);
+    procedure SetUseLocalCSS(const Value: boolean);
+    function GetProtocol: TProtocol;
+    procedure SetProtocol(const Value: TProtocol);
+    procedure ShowEnabled(b: boolean; edt: TEdit);
+    procedure ShowEnabledColors;
+    procedure UpdateProgressBar(FoldersProcessed: integer);
+    function FilesInChildFolder(Path, ChildName, WildName: string): integer;
+    function IsMediaFile(const FileName: string;
+      var MediaType: TMediaType): boolean;
+    function IsInDateRange(const FileName: string): boolean;
+    function GetFileLocations: TCSSLocale;
+    procedure SetFileLocations(const Value: TCSSLocale);
+    function GetUseLocalCSS: boolean;
+    function GetUseRemoteCSS: boolean;
+    procedure SetUseRemoteCSS(const Value: boolean);
+    function GetRemoteCSSLFN: string;
+    function GetLocalCSSLfn: string;
+    procedure SetRowCount(const Value: word);
+    procedure SetColCount(const Value: word);
+  protected
+    fLogFile: TextFile;
+    fLogFileName: string;
+    StartTime: TDateTime;
+    fErrorCount: integer;
+    procedure AfterFolderProcessed(FolderName: string); virtual; {abstract;}
+    procedure EnableButtons; virtual; abstract;
+    procedure FinalizeProcess; virtual;
+    procedure GenerateHTMLforSelectedFolders; virtual; abstract;
+    Procedure Log(const Message: string; LineNo: integer = 0); virtual; abstract;
+  public
+    AbortIt: boolean;
+    TempPhotoTable2: TPhotoTable;
+    TotalFoldersToProcess: integer;
 
-      WriteLn(outfile, '</head>');
+    function AcceptThisFile(const FileName: string): boolean;
+    function CountFoldersToBeProcessed: integer; virtual; abstract;
+//  procedure GenerateIndexPage(const FolderName, path: string);
+    procedure GetListOfChildFolders(const Path: string; ChildNames: TStringList);
+    procedure InitializeProcess; virtual;
+    procedure InitParams;
+    procedure ProcessFolder(CallerTitle, FolderName, path, WildName: string);
+    function ProtoColName: string;
+    Constructor Create(Aowner: TComponent); override;
+    Destructor Destroy; override;
+    procedure UpdateProgressInfo(const ACaption: string; FoldersProcessed: integer);
+    procedure UpdateStatus(const Msg: string);
+    property IncludeEmpty: boolean
+             read fIncludeEmpty
+             write SetIncludeEmpty;
+    property ColCount: word
+             read fColCount
+             write SetColCount;
+    property DeleteOldHTML: boolean
+             read fDeleteOldHTML
+             write fDeleteOldHTML;
+    property ErrorCount: integer
+             read fErrorCount
+             write fErrorCount;
+    property FileLocations: TCSSLocale
+             read GetFileLocations
+             write SetFileLocations;
+    property OnOrAfter: TDateTime
+             read fOnOrAfter
+             write fOnOrAfter;
+    property ProcessSubFolders: boolean
+             read fProcessSubFolders
+             write fProcessSubFolders;
+    property ProtoCol: TProtocol
+             read GetProtoCol
+             write SetProtoCol;
+    property RowCount: word
+             read fRowCount
+             write SetRowCount;
+    property FolderCount: integer
+             read fFolderCount
+             write fFolderCount;
+    property UseLocalCSS: boolean
+             read GetUseLocalCSS
+             write SetUseLocalCSS;
+    property UseRemoteCSS: boolean
+             read GetUseRemoteCSS
+             write SetUseRemoteCSS;
+    property LocalCSSLfn: string
+             read GetLocalCSSLfn
+             write SetLocalCSSLfn;
+    property RemoteCSSLFN: string
+             read GetRemoteCSSLFN
+             write SetRemoteCSSLFN;
+  end;
 
-      WriteLn(outfile, '<body>');
-      WriteLn(outfile, FolderName);
+  TMediaList = class(TStringList)
+  public
+    Destructor Destroy; override;
+    function HtmlMediaCount: integer;
+  end;
 
-      WriteLn(outfile, '<br/><br/>');
-      WriteLn(outfile, '<div class="footer">');
-      WriteLn(outfile, CommonPhotoSettings.CopyRight, '<br/>');
-
-      writeLn(outfile, 'Click on photo for larger view<br/><br/>');
-      WriteLn(outfile, 'Last updated: ', DateToStr(Date()), ' at ', TimeToStr(Time()));
-      WriteLn(outFile, '</div>');
-
-      WriteLn(outfile, '</body>');
-      WriteLn(outfile, '</html>');
-    finally
-      CloseFile(OutFile);
-    end;
-  end;  { GenerateIndexPage }
-
-{ TMediaList }
-
-destructor TMediaList.Destroy;
-  var
-    i: integer;
-begin
-  for i := 0 to Count-1 do
-    Objects[i].Free;
-
-  inherited;
-end;
-
-procedure THTMLGenerator.UpdateStatusProc(const Msg: string; LineNo: integer);
-begin
-  if Assigned(fOnUpdateStatus) then
-    fOnUpdateStatus(Msg{, LineNo});
-end;
-
-
-constructor THTMLGenerator.Create(aOwner: TComponent);
-begin
-  inherited;
-  fYear          := YearOf(Now);
-  fDBRecsUpdated := 0;
-  tblPhotoTable := TPhotoTable.Create( self,
-                                       CommonPhotoSettings.PhotoDBDatabaseFileName,
-                                       cFILENAMES, []);
-  with tblPhotoTable do
-    begin
-      OnUpdateStatus := UpdateStatusProc;
-      Active        := true;
-    end;
-
-  fTreeList         := TStringList.Create;
-end;
-
-procedure THTMLGenerator.ProcessFolder(CallerTitle, FolderName, path, WildName: string);
+(*
 var
-  ChildList: TStringList;
-  HTMLList: TStringList;
-  SiblingList: TStringList;
-  MediaList: TMediaList;
-  i: integer;
-  ImageNr: integer;
+  frmHTMLBase: TfrmHTMLBase;
+*)
+implementation
 
-  function IsMediaFile(const FileName: string; var MediaType: TMediaType): boolean;
+{$R *.dfm}
+
+uses
+  DateUtils, Math, MyUtils, PDBUtils, StStrL,
+  PhotoUtils;
+
+constructor TfrmHTMLBase.Create(Aowner: TComponent);
+var
+  p: TProtocol;
+begin
+  inherited Create(AOwner);
+  fYear          := YearOf(Now);
+
+  fTreeList      := TStringList.Create;
+  cbProcessSubFolders.Checked := true;    // force sub-folders to be processed
+  cbDeleteOldHTML.Checked     := true;
+
+(*
+  FileLocations               := CommonPhotoSettings.CSSLocale;
+  edtLocalCSS.Text            := CommonPhotoSettings.LocalCssLfn;
+  edtRemoteCSS.Text           := CommonPhotoSettings.RemoteCssLfn;
+*)
+  ShowEnabledColors;
+
+  with rgProtocol do
+    begin
+      Items.Clear;
+      for p := succ(Low(TProtocol)) to high(TProtocol) do
+        Items.AddObject(ProtoColInfoArray[p].Value, TObject(p));
+    end;
+  ProtoCol := pHTTP; // DEFAULT_PROTOCOL
+end;
+
+procedure TfrmHTMLBase.ShowEnabled(b: boolean; edt: TEdit);
+begin
+  if b then
+    edt.Color := clWindow
+  else
+    edt.Color := cl3DLight;
+end;
+
+procedure TfrmHTMLBase.ShowEnabledColors;
+begin
+  ShowEnabled(UseLocalCSS,  edtLocalCSS);
+  ShowEnabled(UseRemoteCSS, edtRemoteCSS);
+  Application.ProcessMessages;
+end;
+
+
+destructor TfrmHTMLBase.Destroy;
+begin
+  if fTreeList.Count > 0 then
+    fTreeList.Delete(fTreeList.Count-1);
+  fTreeList.Free;
+  FreeAndNil(fTempFilePathsTable);
+
+  FreeandNil(TempPhotoTable2);
+
+  inherited;
+end;
+
+  function TfrmHTMLBase.IsMediaFile(const FileName: string; var MediaType: TMediaType): boolean;
     var
       Ext: string;
   begin { IsMediaFile }
@@ -249,56 +246,7 @@ var
     result    := MediaType <> mt_Unk;
   end;  { IsMediaFile }
 
-  function IsInDateRange(const FileName: string): boolean;
-  var
-    FileDateTimeStamp: integer;
-    FileDateTime: TDateTime;
-  begin { IsInDateRange }
-    if UpdateRecentOnly then
-      begin
-        FileDateTimeStamp := FileAge(FileName);
-        if FileDateTimeStamp >= 0 then
-          begin
-            FileDateTime      := FileDateToDateTime(FileDateTimeStamp);
-            result            := FileDateTime >= fOnOrAfter;
-          end
-        else
-          result := false;
-      end
-    else
-      result := true;
-  end;  { IsInDateRange }
-
-  // Count known media types or sub-folders only. Basically determine if the specified folder
-  // should be processed or not. Probably should be done recursively to be really correct.
-  function FilesInChildFolder(Path, ChildName, WildName: string): integer;
-    var
-    DirInfo: TSearchRec;
-    DosError: integer;
-    IsADirectory: boolean;
-    Temp, PathName, FullFileName: string;
-    Lfn: string;
-    mt: TMediaType;
-  begin { FilesInChildFolder }
-    result := 0;
-    PathName := path + '\' + ChildName;
-    Temp     := PathName + '\' + WildName;
-    DosError := FindFirst(temp, faAnyFile, DirInfo);
-    while DosError = 0 do
-      begin
-        IsADirectory := ((DirInfo.Attr and faDirectory) <> 0) and
-                         not ((DirInfo.Name = '.') or (DirInfo.Name = '..'));
-        Lfn := UpperCase(DirInfo.Name);
-        FullFileName := PathName + '\' + DirInfo.Name;
-        if (IsMediaFile(Lfn, mt) and IsInDateRange(FullFileName) and (fFileAcceptor(FullFileName))) or IsADirectory then
-          inc(result);
-
-        DosError := FindNext(DirInfo);
-      end;
-    FindClose(DirInfo);
-  end;  { FilesInChildFolder }
-
-  procedure GetListOfChildFolders(ChildNames: TStringList);
+  procedure TfrmHTMLBase.GetListOfChildFolders(const Path: string; ChildNames: TStringList);
   var
     DirInfo: TSearchRec;
     DosError: integer;
@@ -318,6 +266,66 @@ var
       end;
     FindClose(DirInfo);
   end;  { GetListOfChildFolders }
+
+  function TfrmHTMLBase.IsInDateRange(const FileName: string): boolean;
+//var
+//  FileDateTimeStamp: integer;
+//  FileDateTime: TDateTime;
+  begin { IsInDateRange }
+(*
+    if UpdateRecentOnly then
+      begin
+        FileDateTimeStamp := FileAge(FileName);
+        if FileDateTimeStamp >= 0 then
+          begin
+            FileDateTime      := FileDateToDateTime(FileDateTimeStamp);
+            result            := FileDateTime >= OnOrAfter;
+          end
+        else
+          result := false;
+      end
+    else
+*)
+      result := true;
+  end;  { IsInDateRange }
+
+  // Count known media types or sub-folders only. Basically determine if the specified folder
+  // should be processed or not. Probably should be done recursively to be really correct.
+  function TfrmHTMLBase.FilesInChildFolder(Path, ChildName, WildName: string): integer;
+    var
+    DirInfo: TSearchRec;
+    DosError: integer;
+    IsADirectory: boolean;
+    Temp, PathName, FullFileName: string;
+    Lfn: string;
+    mt: TMediaType;
+  begin { FilesInChildFolder }
+    result := 0;
+    PathName := path + '\' + ChildName;
+    Temp     := PathName + '\' + WildName;
+    DosError := FindFirst(temp, faAnyFile, DirInfo);
+    while DosError = 0 do
+      begin
+        IsADirectory := ((DirInfo.Attr and faDirectory) <> 0) and
+                         not ((DirInfo.Name = '.') or (DirInfo.Name = '..'));
+        Lfn := UpperCase(DirInfo.Name);
+        FullFileName := PathName + '\' + DirInfo.Name;
+        if (IsMediaFile(Lfn, mt) and IsInDateRange(FullFileName) and (AcceptThisFile(FullFileName))) or IsADirectory then
+          inc(result);
+
+        DosError := FindNext(DirInfo);
+      end;
+    FindClose(DirInfo);
+  end;  { FilesInChildFolder }
+
+procedure TfrmHTMLBase.ProcessFolder(CallerTitle, FolderName, path, WildName: string);
+var
+  ChildList: TStringList;
+  HTMLList: TStringList;
+  SiblingList: TStringList;
+  MediaList: TMediaList;
+  i: integer;
+  ImageNr: integer;
 
   procedure GetListOfHTMLFiles(HTMLList: TStringList);
     var
@@ -349,7 +357,7 @@ var
 {$IfDef debugging}
     Set8087CW(Default8087CW); // Clear "Invalid Floating Point Operation" that only occurs when debugging
 {$endif}
-    Pages_Needed := Ceil(PhotoCount / (fRowCount * ColCount));
+    Pages_Needed := Ceil(PhotoCount / (RowCount * ColCount));
     for i := 1 to Pages_Needed do
       SiblingList.Add(Format('INDEX-%2.2d', [i]));
   end;  { BuildSiblingList }
@@ -366,25 +374,28 @@ var
     MediaList.Clear;
     // List the media in this folder
     FilePath := Format('%s\%s', [Path, WildName]);
-    DosError := FindFirst(FilePath, FATTR2, DirInfo);
+    DosError := FindFirst(FilePath, FATTR, DirInfo);
     while DosError = 0 do
       begin
         FullFileName := Path + '\' + DirInfo.Name;
-        if IsMediaFile(DirInfo.Name, mt) and IsInDateRange(FullFileName) and fFileAcceptor(FullFileName) then
+        if IsMediaFile(DirInfo.Name, mt) and IsInDateRange(FullFileName) and AcceptThisFile(FullFileName) then
           begin
-            RecordExists := tblPhotoTable.MyLocateRecord(DirInfo.Name, Path);
+            RecordExists := TempPhotoTable2.MyLocateRecord(DirInfo.Name, Path);
             if RecordExists then
               begin
                 ImageInfo := TImageInfo.Create;
                 with ImageInfo do
                   begin
-                    MediaType     := mt;
-                    KeyWords      := tblPhotoTable.fldKEY_WORDS.AsString;
-                    CopyRight     := tblPhotoTable.fldCopyRightTable_CopyID.AsString;
-                    PhotoDate     := tblPhotoTable.fldPhotoDate.AsString;
-                    PhotoDateTime := tblPhotoTable.fldPhotoDateTime.AsDateTime;
-                    IsPrivate     := tblPhotoTable.fldPrivate.AsBoolean;
-                    Key           := tblPhotoTable.fldKey.AsInteger;
+                    ImageInfo.MediaType     := mt;
+                    with TempPhotoTable2 do // Fill in the  ImageInfo
+                      begin
+                        KeyWords      := fldKEY_WORDS.AsString;
+                        CopyRight     := fldCopyRightTable_CopyID.AsString;
+                        PhotoDate     := fldPhotoDate.AsString;
+                        PhotoDateTime := fldPhotoDateTime.AsDateTime;
+                        IsPrivate     := fldPrivate.AsBoolean;
+                        Key           := fldKey.AsInteger;
+                      end;
                   end;
                 MediaList.AddObject(DirInfo.Name, ImageInfo);
               end;
@@ -435,10 +446,10 @@ var
 
       procedure WriteCSSRef;
       begin { WriteCSSRef }
-        if CommonPhotoSettings.UseLocalCSS then
-          WriteLn(outfile, Indent(1), '<link rel="stylesheet" type="text/css" href="', CommonPhotoSettings.LocalCSSLfn, '" />')
+        if UseLocalCSS then
+          WriteLn(outfile, Indent(1), '<link rel="stylesheet" type="text/css" href="file:///', ForceForwardSlashes(LocalCSSLfn), '" />')
         else
-          WriteLn(outfile, Indent(1), '<link rel="stylesheet" type="text/css" href="', CommonPhotoSettings.RemoteCSSLfn, '" />');
+          WriteLn(outfile, Indent(1), '<link rel="stylesheet" type="text/css" href="', RemoteCSSLfn, '" />');
       end;  { WriteCSSRef }
 
 {$IfDef GenAudio}
@@ -480,15 +491,6 @@ var
         i, PhotoCount: integer;
         ImageInfo: TImageInfo;
 
-        procedure ForceForwardSlashes(var s: string);
-          var
-            i: integer;
-        begin { ForceForwardSlashes }
-          for i := 1 to length(s) do
-            if s[i] = '\' then
-              s[i] := '/';
-        end;  { ForceForwardSlashes }
-
         procedure GenerateThumbNail(const FileName, FileExt: string; PhotoKey: integer);
         const
           DELIMS = ' \:.?"''';
@@ -499,19 +501,22 @@ var
         begin { GenerateThumbNail }
           ThumbNailPathAndName0 := ThumbNailPathAndName(Path + '\' + FileName);
           ThumbNailName         := ExtractFileName(ThumbNailPathAndName0);
+
           case MyCreateThumbNail(Path + '\' + FileName, ErrorMsg) of
             tps_CreatedUpdated:
               begin
-                Inc(fThumbCount);
-                if Assigned(fOnUpdateThumbStatus) then
-                  fOnUpdateThumbStatus(Format('Thumbnails Created/Updated: %d', [fThumbCount]));
-                if Assigned(fOnUpdateLogFile) then
-                  fOnUpdateLogFile(Format('Created/Updated thumbnail: %s', [ThumbNailPathAndName0]));
+//              Inc(fThumbCount);
+//              if Assigned(OnUpdateThumbStatus) then
+//                OnUpdateThumbStatus(Format('Thumbnails Created/Updated: %d', [fThumbCount]));
+//              if Assigned(OnUpdateLogFile) then
+//                OnUpdateLogFile(Format('Created/Updated thumbnail: %s', [ThumbNailPathAndName0]));
+                Log(Format('Created/Updated thumbnail: %s', [ThumbNailPathAndName0]));  
               end;
             tps_Error:
-              if Assigned(fOnUpdateLogFile) then
-                fOnUpdateLogFile(Format('Unable to create/update thumbnail "%s" [%s]: ', [ThumbNailName, ErrorMsg]));
+//            if Assigned(OnUpdateLogFile) then
+                Log(Format('Unable to create/update thumbnail "%s" [%s]: ', [ThumbNailName, ErrorMsg]));
           end;
+
 
           if FileExists(ThumbNailPathAndName0) and (not ImageInfo.IsPrivate) then
             begin
@@ -535,7 +540,11 @@ var
               Writeln(outfile, Indent(6),
                       Format('<td class="thumbnails" valign="top" width="%d">',
                              [THUMBNAILWIDTH+4]));
-              WriteLn(OutFile, Indent(7), '<a href="http://ruthanddan.net/SinglePhoto.asp?Key=', PhotoKey, '"', '>');
+              if UseRemoteCSS then
+                WriteLn(OutFile, Indent(7), '<a href="', ProtocolName, '://ruthanddan.net/SinglePhoto.asp?Key=', PhotoKey, '"', '>') else
+              if UseLocalCSS then
+                WriteLn(OutFile, Indent(7), '<a href="file:///', FileName, '"', '>');
+
               Writeln(OutFile, Indent(7),
                       '<img src="tn/', ThumbNailName, '"');
               Writeln(OutFile,
@@ -609,10 +618,13 @@ var
                 if IsVideoMedia(ImageInfo.MediaType) then
                   begin
                     GenerateMediaReference(MediaInfoArray[ImageInfo.MediaType].Desc);
-                    GenerateThumbNail(MediaList[i], GENERAL_MEDIA_FILENAME_EXT, ImageInfo.Key)
-                  end else
+                    if CREATETHUMBS then
+                      GenerateThumbNail(MediaList[i], GENERAL_MEDIA_FILENAME_EXT, ImageInfo.Key)
+                  end
+                else
                 if IsPhotoMedia(ImageInfo.MediaType) then
-                  GenerateThumbNail(MediaList[i], JPG_FILE_EXT, ImageInfo.Key);
+                  if CREATETHUMBS then
+                    GenerateThumbNail(MediaList[i], JPG_FILE_EXT, ImageInfo.Key);
               end;
             WriteLn(outfile, Indent(4), '</tr>');
             WriteLn(outfile, Indent(3), '</table>');
@@ -838,7 +850,8 @@ var
         ReWrite(OutFile);
         try
           WriteLn(outfile, '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">');
-          WriteLn(outfile, '<html lang="en-US" xml:lang="en-US" xmlns="http://www.w3.org/1999/xhtml">');
+          WriteLn(outfile, '<html lang="en-US" xml:lang="en-US" xmlns=', ProtoColName,
+                            '"http://www.w3.org/1999/xhtml">');
           WriteLn(outfile, '<head>' {'<LINK rel="stylesheet" type="text/css" href="http://RuthAndDan.net/MyStyle.css">'});
           GenerateMetaKeywords;
           WriteLn(outfile, Indent(1), '<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />');
@@ -919,7 +932,7 @@ var
 
               ImageNr := ImageEnd + 1;
               inc(RowNr);
-            until (RowNr >= fRowCount) or (ImageNr >= MediaList.Count);
+            until (RowNr >= RowCount) or (ImageNr >= MediaList.Count);
 
           WriteChildLinks;
           WriteSiblingLinks;
@@ -932,15 +945,22 @@ var
           WriteLn(outfile, '<div class="footer">');
           WriteLn(outfile, 'Last updated: ', DateToStr(Date()), ' at ', TimeToStr(Time()), '<br/>');
           WriteLn(outfile, 'Click on photo for larger view');
-          WriteLn(outfile, '<a href="http://RuthAndDan.net/">Home</a> &nbsp;');
-          WriteLn(outfile, '<a href="http://RuthAndDan.net/SearchForm.asp">Search</a> &nbsp;', '<br/>');
-(*
+          if UseRemoteCSS then
+            begin
+              WriteLn(outfile, '<a href="', ProtocolName, '://RuthAndDan.net/">Home</a> &nbsp;');
+              WriteLn(outfile, '<a href="', ProtocolName, '://RuthAndDan.net/SearchForm.asp">Search</a> &nbsp;', '<br/>');
+            end else
+          if UseLocalCSS then
+            begin
+              WriteLn(outfile, '<a href="file:///', CommonPhotoSettings.DefaultLocalWebPagePath, '">Home</a> &nbsp;');
+            end;
+{
           WriteLn(outfile, 'Report errors to: <a href="mailto:dhdorrough@r-and-d-systems.com?subject=Error on RuthAndDan.net"> dhdorrough@r-and-d-systems.com</a><br/>');
           WriteLn(outfile, 'Family Web Site Developed by <a href="http://r-and-d-systems.com/">R&amp;D Systems</a>; Canandaigua, NY 14424<br/>');
-*)
+}
           WriteLn(outfile, CommonPhotoSettings.CopyRight);
           WriteLn(outfile, '</div>');
-        
+
           WriteLn(outfile);
 
   {$IfDef GenAudio}
@@ -957,12 +977,15 @@ var
         end;
       except
         on e:Exception do
-          UpdateStatusProc(Format('Unable to generate page %s (%s)', [Lfn, e.Message]));
+          begin
+            ErrorCount := ErrorCount + 1;
+            UpdateStatus(Format('Unable to generate page %s (%s)', [Lfn, e.Message]));
+          end;
       end;
     end;  { GeneratePage }
 
   begin { GenerateSiblingPages }
-    UpdateStatusProc('Processing: ' + FolderName);
+    UpdateStatus('Processing: ' + FolderName);
 
     ImageNr := 0;  // current global index into the array
 
@@ -999,100 +1022,6 @@ var
     end;
   end;  { DeleteOldHTMLFiles }
 
-  procedure xUpdateDataBase( const Path: string;
-                            ImageIndex: integer;
-                            FileNameInfo: TFileNameInfo);
-  var
-    OkToCheck: boolean;
-    SoundPathName: string;
-    KeyWords, Msg: string;
-    UpdateInfo: TUpdateInfo;
-    mt: TMediaType;
-    ii: TImageInfo;
-    LocationInfo: TLocationInfo;
-  begin { UpdateDataBase }
-    FillChar(UpdateInfo, SizeOf(UpDateInfo), 0);
-    UpdateInfo.ImagePathName := Path + '\' + MediaList[ImageIndex];
-    if UpdateRecentOnly then
-      OkToCheck := (FileDateToDateTime(FileAge(UpdateInfo.ImagePathName)) >= fOnOrAfter)
-    else
-      OkToCheck := true;
-
-    if OkToCheck then
-      begin
-        UpdateInfo.FileName     := ExtractFileName(UpdateInfo.ImagePathName);
-        UpdateInfo.FilePath     := ExtractFilePath(UpdateInfo.ImagePathName);
-        UpdateInfo.FileNameInfo := FileNameInfo;
-//      if not Empty(UpdateInfo.FileNameInfo.DefaultArea) then
-        if not Empty(LocationInfo.DefaultLocation) then
-          LocationInfo.DefaultLocationKind := dl_SpecifiedValue
-        else
-          LocationInfo.DefaultLocationKind := CommonPhotoSettings.DefaultLocationKind;
-
-        if UpdateInfo.FilePath[Length(UpdateInfo.FilePath)] = '\' then
-          Delete(UpdateInfo.FilePath, Length(UpdateInfo.FilePath), 1);
-
-        UpdateInfo.RecordExists := tblPhotoTable.MyLocateRecord(UpdateInfo.FileName, UpdateInfo.FilePath);
-        if UpdateInfo.RecordExists then
-          begin
-            KeyWords            := tblPhotoTable.fldKEY_WORDS.AsString;
-            UpdateInfo.PhotoDateYYYYMMDD     := tblPhotoTable.fldPhotoDate.AsString;
-            UpdateInfo.PhotoDateTime := tblPhotoTable.fldPhotoDateTime.AsDateTime;
-          end
-        else if CommonPhotoSettings.UpdateDB then
-          begin
-            mt  := MediaTypeFromExtension(ExtractFileExt(UpdateInfo.ImagePathName));
-            if IsPhotoMedia(mt) then
-              begin
-                SoundPathName           := ForceExtensionL(UpdateInfo.ImagePathName, 'WAV');
-                UpdateInfo.HasSoundFile := FileExists(SoundPathName);
-              end;
-            if not GetPhotoInfo(UpdateInfo) then
-              begin
-                Msg := Format('Unable to GetPhotoInfo for file: %s', [UpdateInfo.ImagePathName]);
-                Alert(Msg);
-                if Assigned(fOnUpdateLogFile) then
-                  fOnUpdateLogFile(Msg);
-              end;
-//          UpdateInfo.FileNameInfo.MinutesToAdd   := 0;
-            UpdateInfo.MinutesToAdd   := 0;
-            UpdateInfo.UpdateIt       := true;
-
-            try
-              tblPhotoTable.UpdateProc(UpdateInfo, LocationInfo, KeyWords, nil);
-            except
-              on e:Exception do
-                raise Exception.CreateFmt('Error while updating table "%s" [%s]',
-                                          [UpdateInfo.FileName, e.Message]);
-            end;
-            inc(fDBRecsUpdated);
-            if Assigned(fOnUpdateLogFile) then
-              fOnUpdateStatus(Format('%d recs added', [fDBRecsUpdated]));
-{$IfDef debugging}
-            if Assigned(fOnUpdateLogFile) then
-              fOnUpdateLogFile('Record NOT Added (debugging): ' + UpdateInfo.FilePath + '\' + UpdateInfo.FileName);
-{$Else}
-            if Assigned(fOnUpdateLogFile) then
-              fOnUpdateLogFile('Record Added: ' + UpdateInfo.FilePath + '\' + UpdateInfo.FileName);
-{$EndIf}
-          end
-        else
-          if Assigned(fOnUpdateStatus) then
-            fOnUpdateStatus('gUpdateDb is False');
-(**)  // This code had been deleted and might not work when called from uPhotoDB
-        ii               := TImageInfo(MediaList.Objects[ImageIndex]);
-        ii.KeyWords      := KeyWords;
-        ii.CopyRight     := tblPhotoTable.fldCopyRightTable_CopyID.AsString;
-        ii.PhotoDate     := UpdateInfo.PhotoDateYYYYMMDD;
-        ii.PhotoDateTime := UpdateInfo.PhotoDateTime;
-//      if not SameText(ii.CopyRight, DEF_COPY_ID) then
-//        ii.CopyRightOwner := tblPhotoTable.CopyRightOwner;
-        ii.IsPrivate     := tblPhotoTable.fldPrivate.AsBoolean;
-        ii.Key           := tblPhotoTable.fldKey.AsInteger;
-(**)
-      end;
-  end;  { UpdateDataBase }
-
   procedure UpdateFolderList(const Path: string;
                             FileNameInfo: TFileNameInfo);
   var
@@ -1108,10 +1037,15 @@ var
       end;
   end;  { UpdateFolderList }
 
-begin { TForm_HTMLMaker.ProcessFolder }
-  UpdateStatusProc(Format('Processing folder %d: Path: %s', [fFoldersProcessed, path]));
+begin { THTMLBase.ProcessFolder }
+  if AbortIt then
+    begin
+      UpdateStatus('Canceling process');
+      Exit
+    end;
+
+  UpdateStatus(Format('%d: Path: %s', [fFolderCount, path]));
   inc(fLevel);
-  inc(fFoldersProcessed);
   try
     ChildList        := TStringList.Create;
     ChildList.Sorted := true;
@@ -1122,7 +1056,7 @@ begin { TForm_HTMLMaker.ProcessFolder }
     try
       if DeleteOldHTML then
         DeleteOldHTMLFiles;
-      GetListOfChildFolders(ChildList);
+      GetListOfChildFolders(Path, ChildList);
       GetListOfHTMLFiles(HTMLList);
       BuildMediaList(MediaList, WildName);
       if fIncludeEmpty then
@@ -1135,23 +1069,77 @@ begin { TForm_HTMLMaker.ProcessFolder }
             ProcessFolder(FolderName, ChildList[i], path + '\' + ChildList[i], WildName) else
           if fIncludeEmpty then  // was:         if cbIncludeEmpty.Checked then
             ProcessFolder(FolderName, ChildList[i], path + '\' + ChildList[i], WildName);
-      UpdateStatusProc(Format('COMPLETE. %d folders processed', [fFoldersProcessed]));
-
+      UpdateStatus(Format('COMPLETE. %d folders processed', [fFolderCount]));
 
     finally
-      ChildList.Free;
-      SiblingList.Free;
-      MediaList.Free;
-      HTMLList.Free;
+      FreeAndNil(ChildList);
+      FreeAndNil(SiblingList);
+      FreeAndNil(MediaList);
+      FreeAndNil(HTMLList);
       fTreeList.Delete(fTreeList.Count-1);
       inc(fFolderCount);
-      if Assigned(fAfterFolderProcessed) then
-        fAfterFolderProcessed(Path);
+      UpdateProgressInfo('Processing', fFolderCount);
+      AfterFolderProcessed(Path);
     end;
   finally
     Dec(fLevel);
   end;
-end;  { TForm_HTMLMaker.ProcessFolder }
+end;  { TfrmHTMLBase.ProcessFolder }
+
+
+function TfrmHTMLBase.ProtocolName: string;
+begin
+  result := ProtocolInfoArray[Protocol].Value;
+end;
+
+procedure TfrmHTMLBase.SetIncludeEmpty(const Value: boolean);
+begin
+  Assert(false, 'SetIncludeEmpty');
+end;
+
+procedure TfrmHTMLBase.SetLocalCSSLfn(const Value: string);
+begin
+  edtLocalCSS.Text := Value;
+end;
+
+procedure TfrmHTMLBase.SetRemoteCSSLFN(const Value: string);
+begin
+  edtRemoteCSS.Text := Value;
+end;
+
+procedure TfrmHTMLBase.UpdateStatus(const Msg: string);
+begin
+  lblStatus.Caption := Msg;
+  Application.ProcessMessages;
+end;
+
+function TfrmHTMLBase.GetProtocol: TProtocol;
+begin
+  result := pUnknown;
+  with rgProtocol do
+    if ItemIndex >= 0 then
+      result := TProtocol(Items.Objects[ItemIndex]);
+end;
+
+procedure TfrmHTMLBase.SetProtocol(const Value: TProtocol);
+begin
+  with rgProtocol do
+   begin
+     ItemIndex := Items.IndexOfObject(TObject(Value))
+   end;
+end;
+
+{ TMediaList }
+
+destructor TMediaList.Destroy;
+  var
+    i: integer;
+begin
+  for i := 0 to Count-1 do
+    Objects[i].Free;
+
+  inherited;
+end;
 
 // count the number of items that can be rendered
 function TMediaList.HtmlMediaCount: integer;
@@ -1168,47 +1156,6 @@ begin
     end;
 end;
 
-destructor THTMLGenerator.Destroy;
-begin
-  tblPhotoTable.Active   := false;
-  tblPhotoTable.Filtered := false;
-  FreeandNil(tblPhotoTable);
-  FreeAndNil(fTempFilePathsTable);
-
-  if fTreeList.Count > 0 then
-    fTreeList.Delete(fTreeList.Count-1);
-  fTreeList.Free;
-
-  inherited;
-end;
-
-procedure THTMLGenerator.SetIncludeEmpty(const Value: boolean);
-begin
-  if fIncludeEmpty <> Value then
-    begin
-      fIncludeEmpty := Value;
-      if fIncludeEmpty and (not Assigned(fTempFilePathsTable)) then
-        begin
-          fTempFilePathsTable := TFilePathsTable.Create( self,
-                                                         CommonPhotoSettings.PhotoDBDatabaseFileName,
-                                                         cFILEPATHS,
-                                                         []);
-          fTempFilePathsTable.Active := true;
-        end;
-    end;
-end;
-
-procedure THTMLGenerator.SetProcessSubFolders(const Value: boolean);
-begin
-  fProcessSubFolders := Value;
-  fLevel := 0; fFoldersProcessed := 0;
-end;
-
-procedure THTMLGenerator.SetStartTime(const Value: double);
-begin
-  fStartTime := Value;
-end;
-
 { TImageInfo }
 
 function TImageInfo.IncludeThisPhoto: boolean;
@@ -1216,20 +1163,175 @@ begin
   result := (MediaType in HTML_MEDIA) and (not IsPrivate);
 end;
 
-procedure THTMLGenerator.ListBox1ClickCheck(Sender: TObject);
-var
-  i, NrChecked: integer;
+procedure TfrmHTMLBase.InitParams;
 begin
-  NrChecked := 0;
-  for i := 0 to ListBox1.Count-1 do
-    if ListBox1.Checked[i] then
-      Inc(NrChecked);
-  lblStatus.Caption := Format('At least %d folders to process', [NrChecked]);
+  RowCount          := CommonPhotoSettings.RowCount;        // should come from CommonSettings
+  ColCount          := CommonPhotoSettings.ColCount;        // should come from CommonSettings
+  FileLocations     := CommonPhotoSettings.CSSLocale;
+  edtLocalCSS.Text  := CommonPhotoSettings.LocalCssLfn;
+  edtRemoteCSS.Text := CommonPhotoSettings.RemoteCssLfn;
+//UpdateRecentOnly  := false;    // should come from CommonSettings
+  ProcessSubFolders := cbProcessSubFolders.Checked;    // force sub-folders to be processed
+  DeleteOldHTML     := cbDeleteOldHTML.Checked;
+  StartTime         := DWORD(GetCurrentTime);
+  FolderCount       := 0;
+  AbortIt           := false;
 end;
 
-procedure THTMLGenerator.FormShow(Sender: TObject);
+
+procedure TfrmHTMLBase.btnBeginClick(Sender: TObject);
 begin
-  ListBox1ClickCheck(nil);
+  FolderCount       := 0;
+
+  // Remember the default settings
+  CommonPhotoSettings.CSSLocale    := FileLocations;
+  CommonPhotoSettings.LocalCssLfn  := LocalCSSLfn;
+  CommonPhotoSettings.RemoteCssLfn := RemoteCSSLFN;
+  CommonPhotoSettings.RowCount     := RowCount;
+  CommonPhotoSettings.ColCount     := ColCount;
+end;
+
+procedure TfrmHTMLBase.AfterFolderProcessed(FolderName: string);
+begin
+end;
+
+function TfrmHTMLBase.GetUseLocalCSS: boolean;
+begin
+  result := rgFileReference.ItemIndex = 0;
+end;
+
+function TfrmHTMLBase.GetUseRemoteCSS: boolean;
+begin
+  result := rgFileReference.ItemIndex = 1;
+end;
+
+procedure TfrmHTMLBase.SetUseRemoteCSS(const Value: boolean);
+begin
+  if Value then
+    rgFileReference.ItemIndex := 1;
+end;
+
+procedure TfrmHTMLBase.SetUseLocalCSS(const Value: boolean);
+begin
+  if Value then
+    rgFileReference.ItemIndex := 0;
+end;
+
+
+
+procedure TfrmHTMLBase.InitializeProcess;
+begin
+  fSavedCursor  := Screen.Cursor;
+  Screen.Cursor := crSQLWait;
+  ProgressBar1.Min      := 0;
+  ProgressBar1.Max      := 100;
+  ProgressBar1.Position := 0;
+end;
+
+procedure TfrmHTMLBase.FinalizeProcess;
+begin
+  Screen.Cursor := fSavedCursor;
+  ProgressBar1.Position := 100;
+  MessageFmt('Processed %d folders, %d errors occurred', [FolderCount, ErrorCount]);
+  if AbortIt then
+    Message('Process cancelled by operator'); 
+end;
+
+
+function TfrmHTMLBase.AcceptThisFile(const FileName: string): boolean;
+begin
+  result := IsPhotoMedia(MediaTypeFromExtension(ExtractFileExt(FileName)));
+end;
+
+(*
+procedure TfrmHTMLBase.SetTotalFoldersToProcess(const Value: integer);
+begin
+  fTotalFoldersToProcess := Value;
+end;
+*)
+
+procedure TfrmHTMLBase.UpdateProgressBar(FoldersProcessed: integer);
+begin
+  if TotalFoldersToProcess <> 0 then
+    ProgressBar1.Position := Round((FolderCount {was:FoldersProcessed} / TotalFoldersToProcess) * 100.0);
+end;
+
+procedure TfrmHTMLBase.UpdateProgressInfo(const ACaption: string; FoldersProcessed: integer);
+begin
+  if TotalFoldersToProcess <> 0 then
+    lblProgressInfo.Caption := Format('%d/%d Folders %s (%0.1n %%)',
+                                      [FoldersProcessed,
+                                       TotalFoldersToProcess,
+                                       ACaption,
+                                       (FoldersProcessed / TotalFoldersToProcess) * 100.0])
+  else
+    lblProgressInfo.Caption := Format('%d Folders %s', [FolderCount {was:FoldersProcessed}, ACaption]);
+  UpdateProgressBar(FolderCount{FoldersProcessed});
+  Application.ProcessMessages;
+end;
+
+
+function TfrmHTMLBase.GetFileLocations: TCSSLocale;
+begin
+  case rgFileReference.ItemIndex of
+    0: result := cl_Local;
+    1: result := cl_Remote;
+    else
+       result := cl_Unknown;
+  end;
+end;
+
+procedure TfrmHTMLBase.SetFileLocations(const Value: TCSSLocale);
+begin
+  case Value of
+    cl_Local:  rgFileReference.ItemIndex := 0;
+    cl_Remote: rgFileReference.ItemIndex := 1;
+  end;
+end;
+
+procedure TfrmHTMLBase.rgFileReferenceClick(Sender: TObject);
+begin
+  edtLocalCSS.Enabled    := UseLocalCSS;
+  edtRemoteCSS.Enabled   := not UseLocalCSS;
+  ShowEnabledColors;
+end;
+
+function TfrmHTMLBase.GetRemoteCSSLFN: string;
+begin
+  result := edtRemoteCSS.Text;
+end;
+
+function TfrmHTMLBase.GetLocalCSSLfn: string;
+begin
+  result := edtLocalCSS.Text;
+end;
+
+procedure TfrmHTMLBase.SetRowCount(const Value: word);
+begin
+  fRowCount := Value;
+  leRowCount.Text := IntToStr(Value);
+end;
+
+procedure TfrmHTMLBase.SetColCount(const Value: word);
+begin
+  fColCount := Value;
+  leColCount.Text := IntToStr(Value);
+end;
+
+procedure TfrmHTMLBase.leRowCountExit(Sender: TObject);
+begin
+  RowCount := StrToInt(leRowCount.Text);
+end;
+
+procedure TfrmHTMLBase.leColCountExit(Sender: TObject);
+begin
+  ColCount := StrToInt(leColCount.Text);
+end;
+
+procedure TfrmHTMLBase.btnCancelClick(Sender: TObject);
+begin
+  AbortIt := true;
 end;
 
 end.
+

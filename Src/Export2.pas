@@ -519,10 +519,10 @@ begin { TfrmExport2.ExportSelectedRecords }
             with fMainForm as TfrmPhotoDataBase do
               begin
                 Update_StatusFmt('Creating tables in %s', [FileName]);
-                CreateTable(cFILENAMES, tblPhotoTable);
-                CreateTable(cFILEPATHS, tblPhotoTable.FilePathsTable);
-                CreateTable(cCOPYRIGHTS, tblPhotoTable.CopyRightsTable);
-                CreateTable(cLOCATIONS,  tblPhotoTable.LocationsTable);
+                CreateTable(cFILENAMES, TempPhotoTable);
+                CreateTable(cFILEPATHS, TempPhotoTable.FilePathsTable);
+                CreateTable(cCOPYRIGHTS, TempPhotoTable.CopyRightsTable);
+                CreateTable(cLOCATIONS,  TempPhotoTable.LocationsTable);
 
                 try
                   Update_StatusFmt('Opening table %s in %s', [cFILENAMES, FileName]);

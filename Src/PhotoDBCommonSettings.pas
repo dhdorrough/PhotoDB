@@ -5,10 +5,19 @@ interface
 uses
   SettingsFiles, Classes, PDB_Decl;
 
+const
+  DEFAULT_ROWS_COUNT = 3;
+  DEFAULT_COLS_COUNT = 6;
+  CCOPYRIGHT = 'Copyright (c) 2026, R && D Systems';
+
 type
+  TCSSLocale = (cl_Unknown, cl_Local, cl_Remote);
+
   TPhotoDBCommonSettings = class(TSettingsFile)
   private
+    fColCount                : integer;
     fCopyRight               : string;
+    fCopyRightID             : string;
     fDayCount                : integer;
     fDefaultLocationKind     : TDefaultLocationKind;
     fDefaultLocation         : string;
@@ -26,16 +35,13 @@ type
     fPhotoEditingProgram     : string;
     fRecentOnly              : boolean;
     fRemoteCssLfn            : string;
-//  fSynonymsFileName        : string;
+    fRowCount                : integer;
     fUpdateDB                : boolean;
-    fUseLocalCSS             : boolean;
     fUseSynonymsByDefault    : boolean;
     fSavedTrackDataLfn       : string;
-    fCopyRightID             : string;
-    fWebsiteURL              : string;
-    fWebSitePassword         : string;
-    fWebSiteUserID           : string;
-    fWebSiteFilePath         : string;
+    fCSSLocale               : TCSSLocale;
+    fDefaultRemoteWebPagePath: string;
+    fDefaultLOcalWebPagePath : string;
     fAlternatePhotoEditingProgram: string;
     function GetPhotoDBDatabaseFileName: string;
     function GetLocalWebFolder: string;
@@ -43,7 +49,6 @@ type
     function GetLocalCssLfn   : string;
     function GetPhotoEditingProgram: string;
     function GetRemoteCssLfn  : string;
-//  function GetSynonymsFileName: string;
     procedure SetPhotoDBDatabaseFileName(const Value: string);
     procedure SetDefaultGPXFilter(const Value: string);
     function GetHikingDBDatabaseFileName: string;
@@ -55,6 +60,10 @@ type
     function GetImportExportFolder: string;
     procedure SetImportExportFolder(const Value: string);
     function GetAlternatePhotoEditingProgram: string;
+    function GetCSSLocale: TCSSLocale;
+    procedure SetCSSLocale(const Value: TCSSLocale);
+    function GetColCount: integer;
+    function GetRowCount: integer;
   protected
     procedure DefineProperties(Filer: TFiler); override;
     procedure IgnoreString(Reader: TReader);
@@ -64,9 +73,15 @@ type
     procedure LoadSettings; override;
     procedure SaveSettings(const SettingsFileName: string); override;
   published
+    property AlternatePhotoEditingProgram: string
+             read GetAlternatePhotoEditingProgram
+             write fAlternatePhotoEditingProgram;
     property CopyRight: string
              read GetCopyRight
              write fCopyRight;
+    property CSSLocale: TCSSLocale
+             read GetCSSLocale
+             write SetCSSLocale;
     property CopyRightID: string
              read fCopyRightID
              write fCopyRightID;
@@ -82,12 +97,24 @@ type
     property DefaultLocationKind: TDefaultLocationKind
              read GetDefaultLocationKind
              write fDefaultLocationKind;
+    property DefaultlocalWebPagePath: string
+             read fDefaultLocalWebPagePath
+             write fDefaultLocalWebPagePath;
+    property DefaultRemoteWebPagePath: string
+             read fDefaultRemoteWebPagePath
+             write fDefaultRemoteWebPagePath;
     property ExePath: string
              read fExePath
              write fExePath;
     property FolderNo: integer
              read fFolderNo
              write fFolderNo;
+    property HikingDBDatabaseFileName: string
+             read GetHikingDBDatabaseFileName
+             write SetHikingDBDatabaseFileName;
+    property ImportExportFolder: string
+             read GetImportExportFolder
+             write SetImportExportFolder;
     property LocalCssLfn: string
              read GetLocalCssLfn
              write fLocalCssLfn;
@@ -97,21 +124,12 @@ type
     property PhotoDBDatabaseFileName: string  // cRootPath + '\PhotoDB.mdb';
              read GetPhotoDBDatabaseFileName
              write SetPhotoDBDatabaseFileName;
-    property HikingDBDatabaseFileName: string
-             read GetHikingDBDatabaseFileName
-             write SetHikingDBDatabaseFileName;
-    property ImportExportFolder: string
-             read GetImportExportFolder
-             write SetImportExportFolder;
     property PhotoDBFolder: string           //
              read GetPhotoDBFolder
              write SetPhotoDBFolder;
     property PhotoEditingProgram: string
              read GetPhotoEditingProgram
              write fPhotoEditingProgram;
-    property AlternatePhotoEditingProgram: string
-             read GetAlternatePhotoEditingProgram
-             write fAlternatePhotoEditingProgram;
     property PhotoTableLastUsed: TDateTime
              read fPhotoTableLastUsed
              write fPhotoTableLastUsed;
@@ -121,6 +139,12 @@ type
     property RemoteCssLfn: string
              read GetRemoteCssLfn
              write fRemoteCssLfn;
+    property RowCount: integer
+             read GetRowCount
+             write fRowCount;
+    property ColCount: integer
+             read GetColCount
+             write fColCount;
     property SavedTrackDataLfn: string  // should this be obsolete?
              read GetSavedTrackDataLfn
              write fSavedTrackDataLfn;
@@ -130,24 +154,9 @@ type
     property UpdateDB: boolean
              read fUpdateDB
              write fUpdateDB;
-    property UseLocalCSS: boolean
-             read fUseLocalCSS
-             write fUseLocalCSS;
     property UseSynonymsByDefault: boolean
              read fUseSynonymsByDefault
              write fUseSynonymsByDefault;
-    property WebsiteURL: string
-             read fWebsiteURL
-             write fWebsiteURL;
-    property WebSiteUserID: string
-             read fWebSiteUserID
-             write fWebSiteUserID;
-    property WebSitePassword: string
-             read fWebSitePassword
-             write fWebSitePassword;
-    property WebSiteFilePath: string
-             read fWebSiteFilePath
-             write fWebSiteFilePath;
   end;
 
 var
@@ -156,7 +165,6 @@ var
   gCommonSettingsFileName: string;
 
 function CommonPhotoSettings: TPhotoDBCommonSettings;
-function PrivateSettingsFileName: string;
 function CommonSettingsFileName(ForceComputerName: boolean): string;
 
 implementation
@@ -171,20 +179,15 @@ begin
   result := gCommonPhotoSettings;
 end;
 
-function PrivateSettingsFileName: string;
-begin
-  result := ForceExtension(ParamStr(0), 'ini');
-end;
-
 function CommonSettingsFileName(ForceComputerName: boolean): string;
 var
-  ExePath, Parameter1, NormalIniPath: string;
+  ExePath, Parameter1: string;
 begin
   ExePath    := ExtractFilePath(ParamStr(0));
   Parameter1 := ParamStr(1);
   if Empty(gCommonSettingsFileName) then
     if (Empty(Parameter1)) then
-      gCommonSettingsFileName := '.\PhotoDB.ini'  // default to simplest
+      gCommonSettingsFileName := ExePath + 'PhotoDB.ini'  // default to simplest
     else
       begin
         gCommonSettingsFileName := Parameter1; // default to Parameter 1
@@ -192,7 +195,7 @@ begin
         MessageFmt('Settings file name: %s (from Parameter #1)', [gCommonSettingsFileName]);
   {$EndIf}
       end;
-
+(*
   if (Empty(Parameter1)) and (Empty(gCommonSettingsFileName) or ForceComputerName) then
     begin
       NormalIniPath := Format('%s%s-%s.%s', [ExePath, PHOTODB_, ComputerName, _INI]);
@@ -209,7 +212,7 @@ begin
             end;
         end;
     end;
-
+*)
   result := gCommonSettingsFileName;
 end;
 
@@ -247,10 +250,10 @@ begin { LoadSettings }
       ExePath                 := gRootPath;
       ChDir(gRootPath);
 
-      CopyRight               := 'Copyright (c) 2020- Daniel H Dorrough';
+      CopyRight               := CCOPYRIGHT;
       CopyRightID             := 'DHD';
       DefaultLocationKind     := dl_LastWord;
-      PhotoDBDatabaseFileName := gRootPath + '\PhotoDB.mdb';
+      PhotoDBDatabaseFileName := gRootPath + '\PhotoDB.accdb';
 
       ImportExportFolder      := 'c:\TEMP\';
       PhotoDBFolder           := gRootPath + '\My Pictures\';
@@ -286,7 +289,10 @@ end;
 
 function TPhotoDBCommonSettings.GetLocalCssLfn: string;
 begin
-  Result := fLocalCssLfn
+  if not Empty(fLocalCssLfn) then
+    Result := fLocalCssLfn
+  else
+    Result := ''; // CLOCALCSSLFN;
 end;
 
 function TPhotoDBCommonSettings.GetLocalWebFolder: string;
@@ -331,7 +337,10 @@ end;
 
 function TPhotoDBCommonSettings.GetRemoteCssLfn: string;
 begin
-  Result := fRemoteCssLfn
+  if not Empty(fRemoteCssLfn) then
+    Result := fRemoteCssLfn
+  else
+    Result := ''; // CREMOTECSSLFN;
 end;
 
 (*
@@ -405,6 +414,35 @@ begin
     Result := 'c:\windows\system32\mspaint.exe'
   else
     Result := fAlternatePhotoEditingProgram;
+end;
+
+function TPhotoDBCommonSettings.GetCSSLocale: TCSSLocale;
+begin
+  if fCSSLocale <> cl_Unknown then
+    result := fCSSLocale
+  else
+    result := cl_Remote;
+end;
+
+procedure TPhotoDBCommonSettings.SetCSSLocale(const Value: TCSSLocale);
+begin
+  fCSSLocale := Value;
+end;
+
+function TPhotoDBCommonSettings.GetColCount: integer;
+begin
+  if fColCount <> 0 then
+    Result := fColCount
+  else
+    Result := DEFAULT_COLS_COUNT;
+end;
+
+function TPhotoDBCommonSettings.GetRowCount: integer;
+begin
+  if fRowCount <> 0 then
+    Result := fRowCount
+  else
+    REsult := DEFAULT_ROWS_COUNT;
 end;
 
 initialization

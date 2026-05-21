@@ -50,11 +50,6 @@ type
     PopupMenu1: TPopupMenu;
     IsDHD1: TMenuItem;
     leCopyRightID: TLabeledEdit;
-    tsInternet: TTabSheet;
-    leWebSiteURL: TLabeledEdit;
-    leWebsiteUserID: TLabeledEdit;
-    leWebsitePassword: TLabeledEdit;
-    leWebSiteFilePath: TLabeledEdit;
     RadioGroup1: TRadioGroup;
     rbLatLong: TRadioButton;
     rbLastWord: TRadioButton;
@@ -68,6 +63,8 @@ type
     Label6: TLabel;
     btnBrowseToAlternatePhotoEditingProgram: TButton;
     Label7: TLabel;
+    leDefaultRemoteWebPagePath: TLabeledEdit;
+    leDefaultLocalWebPagePath: TLabeledEdit;
     procedure btnBrowseToPhotoDBClick(Sender: TObject);
     procedure btnScanClick(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
@@ -167,12 +164,12 @@ begin
   edtHikingMDB.Visible       := true;
   edtHikingMDB.Text          := CommonPhotoSettings.HikingDBDatabaseFileName;
   lblPathToHikingMDB.Visible := true;
-  tsInternet.TabVisible      := true;
+//tsInternet.TabVisible      := true;
 {$Else}
   edtHikingMDB.Visible       := false;
   edtHikingMDB.Text          := CommonPhotoSettings.HikingDBDatabaseFileName;
   lblPathToHikingMDB.Visible := false;
-  tsInternet.TabVisible      := false;
+//tsInternet.TabVisible      := false;
   btnBrowseToHikingDB.Visible := false;
 {$EndIf}
   edtImportExportFolder.Text := CommonPhotoSettings.ImportExportFolder;
@@ -185,16 +182,19 @@ begin
   else
     edtPhotoEditingProgram.Text := cPhotoEditingProgram;
 
-  edtFolderNo.Text := IntToStr(CommonPhotoSettings.FolderNo);
-  leLocalCSS.Text  := CommonPhotoSettings.LocalCssLfn;
-  leRemoteCSS.Text := CommonPhotoSettings.RemoteCssLfn;
+  edtFolderNo.Text        := IntToStr(CommonPhotoSettings.FolderNo);
+  leLocalCSS.Text         := CommonPhotoSettings.LocalCssLfn;
+  leRemoteCSS.Text        := CommonPhotoSettings.RemoteCssLfn;
+//leDefaultWebPage.Text   := CommonPhotoSettings.de
   DefaultLocationKind     := CommonPhotoSettings.DefaultLocationKind;
+
 
   if Empty(CommonPhotoSettings.SavedTrackDataLfn) then
     leTrackDataLfn.Text := DEF_SAVEDTRACKSFILE
   else
     leTrackDataLfn.Text := CommonPhotoSettings.SavedTrackDataLfn;
 
+(*
   if Empty(CommonPhotoSettings.WebSiteURL) then
     leWebsiteURL.Text := FTP_URL
   else
@@ -214,8 +214,10 @@ begin
     leWebSiteFilePath.Text := REMOTE_FILE_PATH
   else
     leWebSiteFilePath.Text := CommonPhotoSettings.WebSiteFilePath;
-
-  cbReferenceLocal.Checked := CommonPhotoSettings.UseLocalCSS;
+*)
+  leDefaultRemoteWebPagePath.Text := CommonPhotoSettings.DefaultRemoteWebPagePath;
+  leDefaultLOcalWebPagePath.Text  := CommonPhotoSettings.DefaultLOcalWebPagePath;
+  cbReferenceLocal.Checked        := CommonPhotoSettings.CSSLocale = cl_Local;
 end;
 
 procedure TfrmPhotoDBOptions.btnOkClick(Sender: TObject);
@@ -234,19 +236,25 @@ begin
   CommonPhotoSettings.LocalCssLfn              := leLocalCSS.Text;   // gLocalCssLfn
   CommonPhotoSettings.RemoteCssLfn             := leRemoteCSS.Text;
   CommonPhotoSettings.PhotoEditingProgram      := edtPhotoEditingProgram.Text;
-  CommonPhotoSettings.UseLocalCss              := cbReferenceLocal.Checked;
+
+  if not cbReferenceLocal.Checked then
+    CommonPhotoSettings.CSSLocale              := cl_Remote else
+  if cbReferenceLocal.Checked then
+    CommonPhotoSettings.CSSLocale              := cl_Local;
 
   CommonPhotoSettings.DefaultGPXFilter         := leGPXFolder.Text;
   CommonPhotoSettings.SavedTrackDataLfn        := leTrackDataLfn.Text;
 
+(*
   CommonPhotoSettings.WebsiteURL               := leWebsiteURL.Text;
   CommonPhotoSettings.WebSiteUserID            := leWebsiteUserID.Text;
   CommonPhotoSettings.WebSitePassword          := leWebSitePassWord.Text;
   CommonPhotoSettings.WebSiteFilePath          := leWebSiteFilePath.Text;
-
+*)
+  CommonPhotoSettings.DefaultRemoteWebPagePath := leDefaultRemoteWebPagePath.Text;
+  CommonPhotoSettings.DefaultLocalWebPagePath  := leDefaultLocalWebPagePath.Text;
+  
   CommonPhotoSettings.DefaultLocationKind      := DefaultLocationKind;
-
-//  := edtSpecifiedValue.Text;
 
   try
     CommonPhotoSettings.FolderNo := StrToInt(edtFolderNo.Text);

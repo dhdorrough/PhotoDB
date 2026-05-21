@@ -1,7 +1,7 @@
 program PhotoDB;
 
 {%ToDo 'PhotoDB.todo'}
-{%File '..\..\GPX Editor\GPX_Editor 1-6-16\lib\FastMM\FastMM4Options.inc'}
+{%File '..\FastMM\FastMM4Options.inc'}
 
 uses
   FastMM4,
@@ -54,9 +54,7 @@ uses
   PhotoUtils in '..\..\MyUtils\PhotoUtils.pas',
   HikingTables in '..\..\Hiking Manager\Src\HikingTables.pas',
   Expression in '..\..\MyUtils\Expression.pas' {frmExpression},
-  ScanForDocuments in 'ScanForDocuments.pas' {frmScanForDocuments},
   DateTimeDiff in 'DateTimeDiff.pas' {frmCalcTimeDiff},
-  ScanForDuplicatesOptions in 'ScanForDuplicatesOptions.pas' {frmScanForDuplicatesOptions},
   uBrowseMemo in '..\..\MyUtils\uBrowseMemo.pas' {frmBrowseMemo},
   BrowseFuncKey in 'BrowseFuncKey.pas' {frmFuncKeyBrowser},
   StrCompareX in '..\..\MyUtils\StrCompareX.pas',
@@ -65,7 +63,6 @@ uses
   BrowseScenes in 'BrowseScenes.pas' {frmBrowseScenes},
   BrowserUnit in '..\..\MyUtils\BrowserUnit.pas' {frmDataSetBrowser},
   PhotoTableBrowser in 'PhotoTableBrowser.pas' {frmPhotoTableBrowser},
-  GenerateHTML2 in 'GenerateHTML2.pas' {HTMLGenerator},
   ConfirmEachPhoto in 'ConfirmEachPhoto.pas' {frmConfirmEachPhoto},
   OverwriteOrAppend in 'OverwriteOrAppend.pas' {frmOverWriteOrAppend},
   TableCreation in '..\..\MyUtils\TableCreation.pas',
@@ -76,7 +73,12 @@ uses
   PathConversions in '..\..\MyUtils\PathConversions.pas',
   RotImg in '..\..\RotateImages\Src\RotImg.pas',
   YesNoDontAskAgain in '..\..\MyUtils\YesNoDontAskAgain.pas' {frmYesNoDontAskAgain},
-  dEXIF in '..\..\dExif2\dexif-master\dEXIF.pas';
+  dEXIF in '..\..\dExif2\dexif-master\dEXIF.pas',
+  Classes in '..\..\..\source\rtl\common\Classes.pas',
+  Protocol_Decl in '..\Protocol_Decl.pas',
+  HTMLBase in 'HTMLBase.pas' {frmHTMLBase},
+  HTMLForSelectedFiles in 'HTMLForSelectedFiles.pas' {frmHTMLForSelectedFiles},
+  HTMLForRootFolder in 'HTMLForRootFolder.pas' {frmHTMLForSelectedRootFolder};
 
 {$R *.RES}
 

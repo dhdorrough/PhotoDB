@@ -1,6 +1,6 @@
 object frmPhotoDBOptions: TfrmPhotoDBOptions
-  Left = 807
-  Top = 260
+  Left = 1146
+  Top = 341
   Width = 622
   Height = 531
   Caption = 'Photo DB Options'
@@ -46,7 +46,7 @@ object frmPhotoDBOptions: TfrmPhotoDBOptions
     Top = 0
     Width = 606
     Height = 413
-    ActivePage = tsPhotoDB
+    ActivePage = tsMakeHTML
     Align = alTop
     Anchors = [akLeft, akTop, akRight, akBottom]
     PopupMenu = PopupMenu1
@@ -286,8 +286,8 @@ object frmPhotoDBOptions: TfrmPhotoDBOptions
       end
       object leLocalCSS: TLabeledEdit
         Left = 12
-        Top = 111
-        Width = 511
+        Top = 204
+        Width = 515
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         EditLabel.Width = 103
@@ -297,7 +297,7 @@ object frmPhotoDBOptions: TfrmPhotoDBOptions
       end
       object leRemoteCSS: TLabeledEdit
         Left = 12
-        Top = 151
+        Top = 107
         Width = 515
         Height = 21
         Anchors = [akLeft, akTop, akRight]
@@ -308,13 +308,33 @@ object frmPhotoDBOptions: TfrmPhotoDBOptions
       end
       object btnLocalCSS: TButton
         Left = 533
-        Top = 108
+        Top = 204
         Width = 58
         Height = 25
         Anchors = [akTop, akRight]
         Caption = 'Browse'
         TabOrder = 5
         OnClick = btnLocalCSSClick
+      end
+      object leDefaultRemoteWebPagePath: TLabeledEdit
+        Left = 12
+        Top = 148
+        Width = 515
+        Height = 21
+        EditLabel.Width = 153
+        EditLabel.Height = 13
+        EditLabel.Caption = 'Default Remote Web Page Path'
+        TabOrder = 6
+      end
+      object leDefaultLocalWebPagePath: TLabeledEdit
+        Left = 12
+        Top = 240
+        Width = 515
+        Height = 21
+        EditLabel.Width = 142
+        EditLabel.Height = 13
+        EditLabel.Caption = 'Default Local Web Page Path'
+        TabOrder = 7
       end
     end
     object tsLocation: TTabSheet
@@ -427,50 +447,6 @@ object frmPhotoDBOptions: TfrmPhotoDBOptions
         Height = 21
         TabOrder = 9
         Text = 'edtSpecifiedValue'
-      end
-    end
-    object tsInternet: TTabSheet
-      Caption = 'Internet'
-      ImageIndex = 3
-      object leWebSiteURL: TLabeledEdit
-        Left = 16
-        Top = 24
-        Width = 369
-        Height = 21
-        EditLabel.Width = 64
-        EditLabel.Height = 13
-        EditLabel.Caption = 'Website URL'
-        TabOrder = 0
-      end
-      object leWebsiteUserID: TLabeledEdit
-        Left = 16
-        Top = 64
-        Width = 121
-        Height = 21
-        EditLabel.Width = 80
-        EditLabel.Height = 13
-        EditLabel.Caption = 'WebSite User ID'
-        TabOrder = 1
-      end
-      object leWebsitePassword: TLabeledEdit
-        Left = 16
-        Top = 104
-        Width = 121
-        Height = 21
-        EditLabel.Width = 90
-        EditLabel.Height = 13
-        EditLabel.Caption = 'WebSite Password'
-        TabOrder = 2
-      end
-      object leWebSiteFilePath: TLabeledEdit
-        Left = 16
-        Top = 144
-        Width = 121
-        Height = 21
-        EditLabel.Width = 85
-        EditLabel.Height = 13
-        EditLabel.Caption = 'WebSite File Path'
-        TabOrder = 3
       end
     end
   end

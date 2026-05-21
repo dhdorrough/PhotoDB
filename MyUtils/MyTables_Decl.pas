@@ -31,12 +31,13 @@ const
 
 type
 
-  TPhotoTableOption = (optNoSyncFilePathTable,  // <== This is probably obsolete!
+  TPhotoTableOption = (optNoSyncFilePathTable,   // <== This is probably obsolete!
                        optReadOnly, optUseClient,
-                       optSortByPathName,
+                       optSortByPathName,        // also probably obsolete
                        optNoFilePathsTable, optNoCopyRightsTable,
                        optLevel12, optNoUpdateDate, optNoConfirmDelete,
-                       optNoSyncFilePaths, optNoSyncCopyrights);
+                       optNoSyncFilePaths, optNoSyncCopyrights,
+                       optNoSyncDateFields);
   TPhotoTableOptions = set of TPhotoTableOption;
 
 

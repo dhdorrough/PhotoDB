@@ -28,14 +28,14 @@ uses
   ActnList, PDB_Decl, ParseExpr, Synonyms, ovcbase, ovcef, ovcpb, ovcnf,
   DragDropFile, GPSTrackingInfoUnit, FillLocationInfo,
   LocationsBrowser, dEXIF, CheckLst, DragDrop, DropTarget,
-  Expression, RecordAudio, ScanForDuplicatesOptions,
+  Expression, RecordAudio, ScanForDuplicatesOptions, 
 {$IfDef dhd}
   HikingTables,
   BoundariesBrowser,
   TracksBrowser,
 {$EndIf}
   BrowserUnit, BrowseScenes, ovcdbnf, Buttons,
-  CopySelectedRecords, GenerateHTML2, LookupsTableUnit, RotImg;
+  CopySelectedRecords, LookupsTableUnit, RotImg;
 
 const
 // 61 dhd 11/21/2013 Jumped version to 1.61
@@ -87,7 +87,7 @@ const
 // SMExport suite  (optional)    http://www.scalabium.com
 
   cVersion = '2.00';
-  cCopyright = 'Copyright (c) 2023, R && D Systems';
+//cCopyright = 'Copyright (c) 2026, R && D Systems';
 
   MAXKEY  = 10;
 
@@ -358,7 +358,6 @@ type
     Poor1: TMenuItem;
     lblStatus2: TLabel;
     OpenSettings1: TMenuItem;
-    SaveProjectAs1: TMenuItem;
     N6: TMenuItem;
     NewProject1: TMenuItem;
     PlayAudio1: TMenuItem;
@@ -517,6 +516,8 @@ type
     ShowEXIFMediaInfo1: TMenuItem;
     Options1: TMenuItem;
     RenameFilesinFoldertoDateTimeTaken1: TMenuItem;
+    forSelectedFiles1: TMenuItem;
+    forSubfoldersofaRootFolder1: TMenuItem;
     procedure BuildInitialDB1Click(Sender: TObject);
     procedure Exit1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -675,7 +676,7 @@ type
     procedure Poor1Click(Sender: TObject);
     procedure Ratethisphoto1Click(Sender: TObject);
     procedure OpenSettings1Click(Sender: TObject);
-    procedure SaveProjectAs1Click(Sender: TObject);
+//  procedure SaveProjectAs1Click(Sender: TObject);
     procedure PlayAudio1Click(Sender: TObject);
     procedure btnAudioRecorderClick(Sender: TObject);
     procedure btnSaveFilterClick(Sender: TObject);
@@ -706,7 +707,6 @@ type
     procedure SetFileDateTimetoPhotoDateTimeforselectedrecords1Click(
       Sender: TObject);
     procedure ScanforFilesnotinDataBase1Click(Sender: TObject);
-    procedure GenerateHTMLforSelectedFolders1Click(Sender: TObject);
     procedure fromFileDate1Click(Sender: TObject);
     procedure fromFileCreationTime1Click(Sender: TObject);
     procedure fromExifDateTime1Click(Sender: TObject);
@@ -788,6 +788,8 @@ type
     procedure CustomKey1Click(Sender: TObject);
     procedure Refresh1Click(Sender: TObject);
     procedure RenameFilesinFoldertoDateTimeTaken1Click(Sender: TObject);
+    procedure forSelectedFiles1Click(Sender: TObject);
+    procedure forSubfoldersofaRootFolder1Click(Sender: TObject);
   private
     procedure CopySelectedFiles;
     function GetForm_Expression: TFrmExpression;
@@ -817,7 +819,7 @@ type
     procedure PhotoTableAfterRefresh(Dataset: TDataSet);
     procedure PhotoTableBeforeRefresh(Dataset: TDataSet);
     procedure FillPhotoDateTime(FromWhat: TFromWhat);
-    function AcceptThisFile(const FileName: string): boolean;
+//  function AcceptThisFile(const FileName: string): boolean;
     procedure Log(const Message: string; LineNo: integer = 0);
     function IsInASubFolderOfSelectedFolder(CurrentFolder: integer): boolean;
     procedure CreateSubFoldersList(const FolderNumber: string);
@@ -834,7 +836,6 @@ type
     function GetScenesBrowser2: TfrmBrowseScenes;
     procedure CheckMarkMenuOrder(NewOrder: TCurrentOrder);
     function CurrentDateType: TDateTypes;
-    procedure RemoveProcessedFolder(FolderName: string);
     procedure PhotoTableBeforeScroll(DataSet: TDataSet);
     procedure BrowseLookupsTable(LookupCategory: TLookupCategory);
     function GetSynonymsTable: TSynonymsTable;
@@ -847,7 +848,6 @@ type
     procedure UpdatePhotoInfo(BitMap: Graphics.TBitMap);
     procedure MoveFile(SrcKey: integer; const BaseName, OldFolderName, NewFolderName: string);
     procedure UpdateDates(GoingToDateTime: boolean; OldDateFieldName, NewDateFieldName: string);
-//  procedure TempAfterScroll(Dataset: TDataSet);
   private
     fAllowRotation: boolean;
     fAlreadyDragging: boolean;
@@ -876,11 +876,11 @@ type
     fSavedLocationInfo: TLocationInfo;
     fFileNamesBrowser: TfrmDataSetBrowser;
     fFillLocationInfo: TfrmFillLocationInfo;
-    fFolderList: TStringList;
+//  fFolderList: TStringList;
     fForm_Expression: TFrmExpression;
     fForm_Expression2: TFrmExpression;
     fFrmAudioRecorder: TfrmAudioRecorder;
-    fHTMLGenerator: THTMLGenerator;
+//  fHTMLGenerator: THTMLGenerator;
     fIgnoreMissingFile: boolean;
     fLastPathNo: integer;
     fLastSearchKind: TLastSearchKind;
@@ -1101,7 +1101,8 @@ uses
   HikingSettingsUnit, ConfirmEachPhoto, Variants, VideoStuff2
 {$IfDef dExif2}
   , dMetadata
-{$endIf}  , ProShowParams;
+{$endIf}
+  , ProShowParams, Protocol_Decl, HTMLForRootFolder, HTMLForSelectedFiles;
 
 const
   SCROLLBOX_TOP = 40;
@@ -1378,16 +1379,13 @@ begin { TfrmPhotoDataBase.PhotoTableFilterRecord }
 
       if Accept then
         if (not Empty(edtFilePathNo.Text)) and IsAllNumeric(edtFilePathNo.Text) then
-          if not cbIncludeSubFolders.Checked then
-            begin
-              Accept := (StrToInt(edtFilePathNo.Text) = fldPATH_NO.AsInteger);
-              IsCritical(Accept);
-            end
-          else
-            begin
-              Accept := IsInASubFolderOfSelectedFolder(fldPATH_NO.AsInteger);
-              IsCritical(Accept);
-            end;
+          begin
+            Accept := (StrToInt(edtFilePathNo.Text) = fldPATH_NO.AsInteger); // see if it is in the root folder
+            if not Accept then
+              if cbIncludeSubFolders.Checked then
+                Accept := IsInASubFolderOfSelectedFolder(fldPATH_NO.AsInteger);
+            IsCritical(Accept);
+          end;
 
       if Accept then
         if not Empty(edtKeyWords.Text) then
@@ -2294,7 +2292,7 @@ begin { TfrmPhotoDataBase.CreateSubFoldersList }
         TempFilePathsTable.Active := true;
 
 //      TempFilePathsTable.IndexFieldNames := Format('%s;%s', [PARENT_NO, PATH_NO]);
-        // dhd 6/10/2019 - changed to the following because not all sub-folders were being found 
+        // dhd 6/10/2019 - changed to the following because not all sub-folders were being found
         TempFilePathsTable.IndexFieldNames := PARENT_NO;
         AddSubFoldersOf(FolderNo);
 
@@ -3351,8 +3349,8 @@ begin
       fTempFilePathsTable := TFilePathsTable.Create( self,
                                                      CommonPhotoSettings.PhotoDBDatabaseFileName,
                                                      cFILEPATHS,
-                                                     [optSortByPathName]);
-      fTempFilePathsTable.Active := true;
+                                                     []);
+      fTempFilePathsTable.Active    := true;
     end;
   result := fTempFilePathsTable;
 end;
@@ -7907,6 +7905,7 @@ begin
 {$IfEnd}
 end;
 
+(*
 // Currently not useful since settings are ALWAYS loaded from / saved to PhotoDB.ini
 procedure TfrmPhotoDataBase.SaveProjectAs1Click(Sender: TObject);
 var
@@ -7935,6 +7934,7 @@ begin
     SaveDialog.Free;
   end;
 end;
+*)
 
 procedure TfrmPhotoDataBase.PlayAudio1Click(Sender: TObject);
 var
@@ -9588,162 +9588,18 @@ begin
   end;
 end;
 
+(*
 // This should be made smarter. Right now it is generating HTML only for photo files
 function TfrmPhotoDataBase.AcceptThisFile(const FileName: string): boolean;
 begin
   result := IsPhotoMedia(MediaTypeFromExtension(ExtractFileExt(FileName)));
 end;
+*)
 
 Procedure TfrmPhotoDataBase.Log(const Message: string; LineNo: integer = 0);
 begin
   WriteLn(fLogFile, Message);
 end;
-
-procedure TfrmPhotoDataBase.RemoveProcessedFolder(FolderName: string);
-var
-  idx: integer;
-begin { RemoveProcessedFolder }
-  FolderName := FolderName + '\';
-  idx := fFolderList.IndexOf(FolderName);
-  if idx >= 0 then
-    fFolderList.Delete(Idx);
-  Log(Format('%5d. %s', [fHTMLGenerator.FolderCount, FolderName]));
-end;  { RemoveProcessedFolder }
-
-procedure TfrmPhotoDataBase.GenerateHTMLforSelectedFolders1Click(
-  Sender: TObject);
-var
-  tempPhotoTable: TPhotoTable;
-  aFullFilePath: string;
-  LogFileName: string;
-  Temp: string;
-  i: integer;
-  FolderName, ParentFolderPath, FolderPath: string;
-  Saved_Cursor: TCursor;
-
-  function GetParentFolderPath(FolderPath: string): string;
-  var
-    OldDir, NewDir: string;
-  begin { GetParentFolderPath }
-    GetDir(0, OldDir);
-    NewDir := FolderPath+'\..';
-    ChDir(NewDir);
-    GetDir(0, result);
-    ChDir(OldDir);
-  end;  { GetParentFolderPath }
-
-begin { TfrmPhotoDataBase.GenerateHTMLforSelectedFolders1Click }
-  Update_Status('Building List of Folders to Process');
-  FreeAndNil(tempPhotoTable);
-  tempPhotoTable     := TPhotoTable.Create( self,
-                                            CommonPhotoSettings.PhotoDBDatabaseFileName,
-                                            cFILENAMES,
-                                            []);
-  fFolderList := TStringList.Create;
-  fFolderList.Sorted := true;
-
-  // Build a list of the folders currently selected for processing
-  try
-    Saved_Cursor  := Screen.Cursor;
-    Screen.Cursor := crSQLWait;
-    try
-      with tempPhotoTable do
-        begin
-          OnFilterRecord := PhotoTableFilterRecord;
-
-          Filtered       := true;
-
-          Active         := true;
-          SetSelectivityParserExpression(fExpression);
-          First;
-          while not eof do
-            begin
-              aFullFilePath := FullFilePath;
-              if (fFolderList.IndexOf(aFullFilePath) < 0) and (Pos(NONEXISTANTFOLDER, aFullFilePath) <= 0) then
-                fFolderList.AddObject(aFullFilePath, TObject(nil));
-              Next;
-            end;
-        end;
-    finally
-      Screen.Cursor := Saved_Cursor;
-    end;
-
-    LogFileName := CalcLogFileName('HTMLGenerated.txt');
-    AssignFile(fLogFile, LogFileName);
-    ReWrite(fLogFile);
-
-    fHTMLGenerator := THTMLGenerator.Create(self);
-    try
-      with fHTMLGenerator do
-        begin
-          cbProcessSubFolders.Checked := true;    // force sub-folders to be processed
-          cbDeleteOldHTML.Checked     := true;
-          for i := 0 to fFolderList.Count-1 do
-            begin
-              ListBox1.Items.Add(fFolderList[i]);
-              ListBox1.Checked[i] := true;
-            end;
-
-          if ShowModal = mrOK then
-            begin
-              Log('');
-              Log('HTML Generated for these folders: ' + DateTimeToStr(Now));
-              Log('');
-
-              // Delete the unselected items
-
-              for i := ListBox1.Count-1 downto 0 do  // assumes a 1-to-1 relation between ListBox1.Items and fFolderList
-                if not ListBox1.Checked[i] then
-                  fFolderList.Delete(i);;
-
-              // now process each of the folders selected
-
-              RowCount          := 2;        // should come from CommonSettings
-              ColCount          := 3;        // should come from CommonSettings
-              UpdateRecentOnly  := false;    // should come from CommonSettings
-              ProcessSubFolders := cbProcessSubFolders.Checked;    // force sub-folders to be processed
-              DeleteOldHTML     := cbDeleteOldHTML.Checked;
-              DayCount          := 0;        // irrelevent if UpdateRecentOnly is false
-//            FileNameInfo      := fFileNameInfo;
-              FileAcceptor      := AcceptThisFile;
-              AfterFolderProcessed := RemoveProcessedFolder;
-              StartTime         := DWORD(GetCurrentTime);
-              FolderCount       := 0;
-              ThumbCount        := 0;
-              OnUpdateStatus    := Update_Status;
-              OnUpdateThumbStatus := Update_Status;
-              OnUpdateLogFile   := self.Log;
-
-              OnOrAfter         := Now - DayCount;
-
-              i := fFolderList.Count-1;
-              while i >= 0  do
-                begin
-                  FolderPath       := RemoveTrailingBackSlash(fFolderList[i]);
-                  FolderName       := ExtractFileName(FolderPath);
-                  ParentFolderPath := GetParentFolderPath(FolderPath);
-                  ProcessFolder(ParentFolderPath, FolderName, FolderPath, '*.*');
-                  Update_Status(Format('Processing: %d folders successfully processed', [fHTMLGenerator.FolderCount]));
-                  Dec(i);
-                end;
-            end;
-        end;
-    finally
-      Update_Status(Format('COMPLETE. %d folders successfully processed', [fHTMLGenerator.FolderCount]));
-      if fHTMLGenerator.FolderCount > 0 then
-        begin
-          CloseFile(fLogFile);
-          temp := Format('Notepad.exe %s', [LogFileName]);
-          FileExecute(temp, false);
-        end;
-      fHTMLGenerator.Free;
-    end;
-
-  finally
-    FreeAndNil(tempPhotoTable);
-    FreeAndNil(fFolderList);
-  end;
-end;  { TfrmPhotoDataBase.GenerateHTMLforSelectedFolders1Click }
 
 procedure TfrmPhotoDataBase.FillPhotoDateTime(FromWhat: TFromWhat);
 var
@@ -12378,6 +12234,66 @@ begin
         ChDir(OldDir);
       end;
     end;
+end;
+
+procedure TfrmPhotoDataBase.forSelectedFiles1Click(Sender: TObject);
+begin
+  frmHTMLForSelectedFiles := TfrmHTMLForSelectedFiles.Create(self);
+  try
+    with frmHTMLForSelectedFiles do
+      try
+        TempPhotoTable2 := TPhotoTable.Create( self,
+                                           CommonPhotoSettings.PhotoDBDatabaseFileName,
+                                           cFILENAMES,
+                                           [optReadOnly]);
+
+        TempPhotoTable2.OnFilterRecord   := PhotoTableFilterRecord;
+        TempPhotoTable2.Filtered         := true;
+        TempPhotoTable2.Active := true;
+        TempPhotoTable2.SetSelectivityParserExpression(Expression);
+        InitializeProcess;
+        try
+          ShowModal;
+        finally
+          FinalizeProcess;
+        end;
+      finally
+        FreeAndNil(TempPhotoTable2);
+      end;
+  finally
+    FreeAndNil(frmHTMLForSelectedFiles);
+  end;
+end;
+
+procedure TfrmPhotoDataBase.forSubfoldersofaRootFolder1Click(
+  Sender: TObject);
+begin
+  frmHTMLForSelectedRootFolder := TfrmHTMLForSelectedRootFolder.Create(self);
+  try
+    with frmHTMLForSelectedRootFolder do
+      begin
+        TempPhotoTable2 := TPhotoTable.Create( self,
+                                           CommonPhotoSettings.PhotoDBDatabaseFileName,
+                                           cFILENAMES,
+                                           []);
+        try
+          TempPhotoTable2.OnFilterRecord   := PhotoTableFilterRecord;
+          TempPhotoTable2.Filtered         := true;
+          TempPhotoTable2.Active := true;
+          TempPhotoTable2.SetSelectivityParserExpression(Expression);
+          InitializeProcess;
+          try
+            ShowModal;
+          finally
+            FinalizeProcess;
+          end;
+        finally
+          FreeAndNil(TempPhotoTable2);
+        end;
+      end;
+  finally
+    FreeAndNil(frmHTMLForSelectedRootFolder);
+  end;
 end;
 
 { TSubFoldersList }

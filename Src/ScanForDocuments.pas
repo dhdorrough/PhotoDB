@@ -134,7 +134,7 @@ uses
   Math, JPeg, JpegConv, FileCtrl, StStrL,
   MyUtils, ShlObj, ActiveX, ComObj, DateUtils, ScanningOptions,
   PhotoDBCommonSettings, uPhotoDBOptions, GPSTrackingInfoUnit, MyTables_Decl,
-  PhotoUtils, GenerateHTML2{, uMakeHTML};
+  PhotoUtils;
 
 const
   SMALLFONTSTR = '<font face="Verdana, Arial, Helvetica, Sans-Serif" size="-2">';
@@ -639,7 +639,8 @@ begin { TfrmImportPhotos.btnImportClick }
         if cbIsRootDir.Checked then
           begin
             FolderName := '';
-            GenerateIndexPage( ExtractFileName(PathName), PathName);
+            Assert(false, 'System error: fHTMLMaker.GenerateIndexPage is not available');
+//          fHTMLMaker.GenerateIndexPage( ExtractFileName(PathName), PathName);
           end
         else
           begin

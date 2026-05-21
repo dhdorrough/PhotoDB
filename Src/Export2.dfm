@@ -14,8 +14,8 @@ object frmExport2: TfrmExport2
   Position = poScreenCenter
   OnCreate = FormCreate
   DesignSize = (
-    568
-    201)
+    560
+    193)
   PixelsPerInch = 96
   TextHeight = 13
   object lblStatus01: TLabel

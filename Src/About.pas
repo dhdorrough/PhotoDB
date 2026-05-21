@@ -23,7 +23,7 @@ type
 
 implementation
 
-uses uPhotoDB;
+uses uPhotoDB, PhotoDBCommonSettings;
 
 {$R *.dfm}
 

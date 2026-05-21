@@ -1,6 +1,6 @@
 object frmPhotoDataBase: TfrmPhotoDataBase
-  Left = 410
-  Top = 146
+  Left = 405
+  Top = 211
   Width = 1325
   Height = 673
   Caption = 'Photo Database'
@@ -319,7 +319,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           Top = 56
           Width = 349
           Height = 23
-          TabOrder = 2
+          TabOrder = 3
           OnChange = ParameterChanged
         end
         object edtLowDate: TEdit
@@ -327,7 +327,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           Top = 98
           Width = 66
           Height = 23
-          TabOrder = 3
+          TabOrder = 4
           OnChange = ParameterChanged
         end
         object edtHighDate: TEdit
@@ -335,7 +335,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           Top = 98
           Width = 66
           Height = 23
-          TabOrder = 4
+          TabOrder = 5
           OnChange = ParameterChanged
         end
         object cbDateType: TComboBox
@@ -345,7 +345,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           Height = 23
           Style = csDropDownList
           ItemHeight = 15
-          TabOrder = 5
+          TabOrder = 6
           OnChange = ParameterChanged
           Items.Strings = (
             'Photo Date'
@@ -358,7 +358,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           Top = 146
           Width = 42
           Height = 23
-          TabOrder = 6
+          TabOrder = 7
           OnChange = ParameterChanged
         end
         object edtHighYear: TEdit
@@ -366,7 +366,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           Top = 146
           Width = 42
           Height = 23
-          TabOrder = 7
+          TabOrder = 8
           OnChange = ParameterChanged
         end
         object edtLowMonth: TEdit
@@ -374,7 +374,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           Top = 146
           Width = 27
           Height = 23
-          TabOrder = 8
+          TabOrder = 9
           OnChange = ParameterChanged
         end
         object edtHighMonth: TEdit
@@ -382,7 +382,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           Top = 146
           Width = 26
           Height = 23
-          TabOrder = 9
+          TabOrder = 10
           OnChange = ParameterChanged
         end
         object edtKeyWords: TEdit
@@ -390,7 +390,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           Top = 189
           Width = 350
           Height = 23
-          TabOrder = 27
+          TabOrder = 28
           OnChange = ParameterChanged
         end
         object cbMatchWholeWordsOnly: TCheckBox
@@ -401,7 +401,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           Caption = 'Match &Whole Words Only'
           Checked = True
           State = cbChecked
-          TabOrder = 14
+          TabOrder = 15
           OnClick = ParameterChanged
         end
         object cbHasSound: TCheckBox
@@ -410,7 +410,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           Width = 83
           Height = 17
           Caption = 'Has Sound'
-          TabOrder = 26
+          TabOrder = 27
           OnClick = ParameterChanged
         end
         object edtCopyCode: TMaskEdit
@@ -423,7 +423,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           MaxLength = 4
           ParentShowHint = False
           ShowHint = True
-          TabOrder = 13
+          TabOrder = 14
           OnChange = ParameterChanged
         end
         object cbNot: TCheckBox
@@ -431,7 +431,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           Top = 149
           Width = 15
           Height = 17
-          TabOrder = 12
+          TabOrder = 13
           OnClick = ParameterChanged
         end
         object cbUnprocessedOnly: TCheckBox
@@ -440,7 +440,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           Width = 122
           Height = 17
           Caption = '&Unprocessed Only'
-          TabOrder = 25
+          TabOrder = 26
           OnClick = ParameterChanged
         end
         object btnApply: TButton
@@ -451,7 +451,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           Anchors = [akLeft, akBottom]
           Caption = '&Apply'
           Default = True
-          TabOrder = 33
+          TabOrder = 34
           OnClick = btnApplyClick
         end
         object btnClear: TButton
@@ -461,7 +461,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           Height = 25
           Anchors = [akLeft, akBottom]
           Caption = 'Clear'
-          TabOrder = 32
+          TabOrder = 33
           OnClick = btnClearClick
         end
         object cbUseSynonyms: TCheckBox
@@ -470,7 +470,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           Width = 105
           Height = 17
           Caption = 'Use Synonyms'
-          TabOrder = 15
+          TabOrder = 16
           OnClick = cbUseSynonymsClick
         end
         object cbLocationID: TCheckBox
@@ -479,7 +479,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           Width = 126
           Height = 17
           Caption = 'Has Location ID'
-          TabOrder = 18
+          TabOrder = 19
           OnClick = ParameterChanged
         end
         object cbHasLocationInfoInEXIF: TCheckBox
@@ -488,7 +488,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           Width = 160
           Height = 17
           Caption = 'Has Location Info in EXIF'
-          TabOrder = 19
+          TabOrder = 20
           OnClick = ParameterChanged
         end
         object clbMediaClasses: TCheckListBox
@@ -503,7 +503,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           BevelOuter = bvNone
           ItemHeight = 15
           ParentColor = True
-          TabOrder = 28
+          TabOrder = 29
         end
         object btnExpression: TButton
           Left = 149
@@ -514,7 +514,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           Caption = 'Expression'
           ParentShowHint = False
           ShowHint = True
-          TabOrder = 31
+          TabOrder = 32
           OnClick = btnExpressionClick
         end
         object btnLoadFilter: TButton
@@ -524,7 +524,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           Height = 25
           Anchors = [akLeft, akBottom]
           Caption = 'Load Filter'
-          TabOrder = 29
+          TabOrder = 30
           OnClick = btnLoadFilterClick
         end
         object btnSaveFilter: TButton
@@ -534,7 +534,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           Height = 25
           Anchors = [akLeft, akBottom]
           Caption = 'Save Filter'
-          TabOrder = 30
+          TabOrder = 31
           OnClick = btnSaveFilterClick
         end
         object edtFilePathNo: TEdit
@@ -551,7 +551,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           Width = 151
           Height = 17
           Caption = 'File is Missing'
-          TabOrder = 21
+          TabOrder = 22
           OnClick = ParameterChanged
         end
         object cbScanComments: TCheckBox
@@ -560,7 +560,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           Width = 174
           Height = 17
           Caption = 'Scan Comment for KeyWords'
-          TabOrder = 17
+          TabOrder = 18
           OnClick = cbScanCommentsClick
         end
         object cbScanFile: TCheckBox
@@ -569,7 +569,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           Width = 174
           Height = 17
           Caption = 'Scan File for KeyWords'
-          TabOrder = 22
+          TabOrder = 23
         end
         object cbAllowStrSimilarity: TCheckBox
           Left = 2
@@ -577,7 +577,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           Width = 118
           Height = 17
           Caption = 'StrCompare Match'
-          TabOrder = 16
+          TabOrder = 17
           OnClick = cbAllowStrSimilarityClick
         end
         object meSS: TOvcNumericField
@@ -597,7 +597,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           Enabled = False
           Options = [efoArrowIncDec]
           PictureMask = '99'
-          TabOrder = 34
+          TabOrder = 35
           RangeHigh = {63000000000000000000}
           RangeLow = {0A000000000000000000}
         end
@@ -613,7 +613,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           Font.Name = 'Arial'
           Font.Style = []
           ParentFont = False
-          TabOrder = 35
+          TabOrder = 2
           Visible = False
         end
         object cbScanSceneKeyWords: TCheckBox
@@ -622,7 +622,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           Width = 174
           Height = 17
           Caption = 'Scan Scenes for KeyWords'
-          TabOrder = 23
+          TabOrder = 24
         end
         object cbHasSceneInfo: TCheckBox
           Left = 2
@@ -630,7 +630,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           Width = 105
           Height = 17
           Caption = 'Has Scene Info'
-          TabOrder = 20
+          TabOrder = 21
           OnClick = cbHasSceneInfoClick
         end
         object cbScanSceneDates: TCheckBox
@@ -639,14 +639,14 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           Width = 174
           Height = 17
           Caption = 'Scan Scenes for Dates'
-          TabOrder = 24
+          TabOrder = 25
         end
         object edtLowDay: TEdit
           Left = 181
           Top = 146
           Width = 27
           Height = 23
-          TabOrder = 10
+          TabOrder = 11
           OnChange = ParameterChanged
         end
         object edtHighDay: TEdit
@@ -654,7 +654,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
           Top = 146
           Width = 26
           Height = 23
-          TabOrder = 11
+          TabOrder = 12
           OnChange = ParameterChanged
         end
       end
@@ -1755,10 +1755,6 @@ object frmPhotoDataBase: TfrmPhotoDataBase
         Enabled = False
         Visible = False
       end
-      object SaveProjectAs1: TMenuItem
-        Caption = 'Save Settings As...'
-        OnClick = SaveProjectAs1Click
-      end
       object N6: TMenuItem
         Caption = '-'
         Visible = False
@@ -2448,8 +2444,15 @@ object frmPhotoDataBase: TfrmPhotoDataBase
         OnClick = AdjustPhotoDatesTimes1Click
       end
       object GenerateHTMLforSelectedFolders1: TMenuItem
-        Caption = 'Generate HTML for Selected Folders...'
-        OnClick = GenerateHTMLforSelectedFolders1Click
+        Caption = 'Generate HTML...'
+        object forSelectedFiles1: TMenuItem
+          Caption = 'for Selected Files...'
+          OnClick = forSelectedFiles1Click
+        end
+        object forSubfoldersofaRootFolder1: TMenuItem
+          Caption = 'for Subfolders of a Root Folder...'
+          OnClick = forSubfoldersofaRootFolder1Click
+        end
       end
       object UploadSelectedFiles1: TMenuItem
         Caption = 'Upload Selected Files...'

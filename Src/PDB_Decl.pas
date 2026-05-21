@@ -11,7 +11,7 @@ const
 
   cPhotoEditingProgram = 'c:\windows\system32\mspaint.exe';
 {$IfDef DHD}
-  cCopyRight     = 'All photos Copyright (c) 2021 - Dan and Ruth Dorrough';
+  cCopyRight     = 'All photos Copyright (c) 2026 - Dan and Ruth Dorrough';
   cLocalWebPath  = 'C:\Inetpub\wwwroot\MyWeb3';
 {$else}
   cLocalWebPath  = '';
@@ -25,8 +25,8 @@ const
   cRecentOnly    = true;
   cDayCount      = 10;
 {$IfDef DHD}
-  cLocalCSSLfn   = 'C:\InetPub\wwwroot\MyWeb5\MyStyle.css';
-  cRemoteCSSLfn  = 'http://RuthAndDan.net/MyStyle.css';
+//  cLocalCSSLfn   = 'C:\InetPub\wwwroot\MyWeb5\MyStyle.css';
+//  cRemoteCSSLfn  = 'http://RuthAndDan.net/MyStyle.css';
 {$EndIf}  
   REG_PHOTODB    = 'SoftWare\R & D Systems\PhotoDB';
 
