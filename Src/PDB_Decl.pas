@@ -28,7 +28,7 @@ const
 //  cLocalCSSLfn   = 'C:\InetPub\wwwroot\MyWeb5\MyStyle.css';
 //  cRemoteCSSLfn  = 'http://RuthAndDan.net/MyStyle.css';
 {$EndIf}  
-  REG_PHOTODB    = 'SoftWare\R & D Systems\PhotoDB';
+//REG_PHOTODB    = 'SoftWare\R & D Systems\PhotoDB';
 
   PHOTODB        = 'PhotoDB';
   EXPORTDB       = 'ExportDB.ACCDB';

@@ -746,7 +746,7 @@ var
   ThumbNailPath: string;
   mt: TMediaType;
   Ext: string;
-  ThumbImg: TRotateImage;
+//ThumbImg: TRotateImage;
 begin
   result            := tps_Ignored;
   if OverWrite and FileExists(ThumbNailPathAndName) then
@@ -766,6 +766,8 @@ begin
         if IsPhotoMedia(mt) then
           begin
             CreateThumbnail(FileName, ThumbNailPathAndName, Width, Height);
+(*          6/19/2026: Commented out because some thumbnails needed to be rotated 180
+                       but were getting rotated twice.
             if RotateBy <> 0 then
               begin
                 ThumbImg := TRotateImage.Create(nil);
@@ -776,6 +778,7 @@ begin
                   FreeAndNil(ThumbImg);
                 end;
               end;
+*)
             result := tps_CreatedUpdated;
           end else
         if MediaInfoArray[mt].MediaClass = mc_Video then

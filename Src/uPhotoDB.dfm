@@ -1,6 +1,6 @@
 object frmPhotoDataBase: TfrmPhotoDataBase
-  Left = 405
-  Top = 211
+  Left = -1357
+  Top = 217
   Width = 1325
   Height = 673
   Caption = 'Photo Database'
@@ -108,7 +108,7 @@ object frmPhotoDataBase: TfrmPhotoDataBase
     Top = 1
     Width = 1289
     Height = 580
-    ActivePage = tabBrowse
+    ActivePage = tabPhoto
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 0
     OnChange = PageControl1Change

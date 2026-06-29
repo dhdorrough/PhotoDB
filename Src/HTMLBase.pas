@@ -110,7 +110,6 @@ type
 
     function AcceptThisFile(const FileName: string): boolean;
     function CountFoldersToBeProcessed: integer; virtual; abstract;
-//  procedure GenerateIndexPage(const FolderName, path: string);
     procedure GetListOfChildFolders(const Path: string; ChildNames: TStringList);
     procedure InitializeProcess; virtual;
     procedure InitParams;
@@ -856,8 +855,10 @@ var
           GenerateMetaKeywords;
           WriteLn(outfile, Indent(1), '<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />');
           WriteLn(outfile, Indent(1), '<meta name="description" content="', FolderName, '"/>');
+{$IfDef dhd}
           WriteLn(outfile, Indent(1), '<meta name="author" content="Dan Dorrough"/>');
           WriteLn(outfile, Indent(1), '<meta name="copyright" content="&copy; ', fYEAR, ' Dan and Ruth Dorrough"/>');
+{$EndIf}          
           WriteLn(outfile, Indent(1), '<meta name="viewport" content= "width = device-width"/>');
           WriteLn(outfile, Indent(1), '<title>', FolderName,'</title>');
 

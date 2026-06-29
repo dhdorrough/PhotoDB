@@ -46,7 +46,7 @@ object frmPhotoDBOptions: TfrmPhotoDBOptions
     Top = 0
     Width = 606
     Height = 413
-    ActivePage = tsMakeHTML
+    ActivePage = tsPhotoDB
     Align = alTop
     Anchors = [akLeft, akTop, akRight, akBottom]
     PopupMenu = PopupMenu1
